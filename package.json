@@ -1,0 +1,27 @@
+{
+  "name": "quote-api",
+  "version": "1.0.0",
+  "description": "Inspiration quotes from the legend!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liangchow/quote-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liangchow/quote-api/issues"
+  },
+  "homepage": "https://github.com/liangchow/quote-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.6.0",
+    "stripe": "^20.0.0"
+  }
+}
