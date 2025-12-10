@@ -35,9 +35,9 @@
         <p class="errMsg">Please ensure your email address is formatted correctly</p>
         <p class="subMsg">You Are Subscribed!</p>
         <div class="keyInput">
-            <input type="email" placeholder="Enter your email" />
+            <input id="userEmail" type="email" placeholder="Enter your email" />
         </div>
-        <div class="addKey">
+        <div id="signup_btn" class="addKey">
             <i class="fa-solid fa-check"></i>Subscribe
         </div>
     </section>
@@ -76,5 +76,39 @@
         </div>
     </div>
 </footer>
+
+<script>
+    const input = document.getElementById('userEmail')
+    const signup_btn = document.getElementById('signup_btn')
+    const errMsg = document.querySelector('.errMsg')
+    const subMsg = document.querySelector('.subMsg')
+
+    async function signupNewUser(){
+        const user_email = input.value.trim()
+        errMsg.style.display = 'none'
+        subMsg.style.display = 'none'
+        if (!user_email || !input.checkValidity()){
+            errMsg.style.display = 'inline'
+            return
+        }
+        try {
+            const res = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user_email })
+            })
+            if (!res.ok){
+                errMsg.style.display = 'inline'
+                return
+            }
+            subMsg.style.display = 'inline'
+            input.value = ''
+        } catch(err){
+            errMsg.style.display = 'inline'
+        }
+    }
+
+    signup_btn.addEventListener('click', signupNewUser)
+</script>    
 
 </html>

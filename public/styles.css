@@ -93,10 +93,12 @@ body {
 
 .errMsg {
     color: coral;
+    display: none;
 }
 
 .subMsg {
     color: lime;
+    display: none;
 }
 
 section {

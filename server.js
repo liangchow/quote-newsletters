@@ -1,23 +1,23 @@
 const express = require('express')
+const { db } = require('./firebase')
 const app = express()
 const PORT = 1339
 require('dotenv').config
 
-// variables
-
-// middleware
+app.use(express.json())
 app.use(express.static('public'))
 
-// routes
 app.post('/signup', async (req, res) => {
-
-    // Create firebase record
-    const data = {
-        email: newEmail,
+    const newEmail = (req.body && req.body.email || '').trim()
+    if (!newEmail){
+        return res.status(400).json({ error: 'Email required' })
     }
-
-    const db = await db.collection('users').doc(newEmail).set(data, {merge: true})
-
+    try {
+        await db.collection('users').doc(newEmail).set({ email: newEmail }, { merge: true })
+        res.json({ success: true })
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to register' })
+    }
 })
 
 app.listen(PORT, () => console.log(`Server has started on port: ${PORT}`))
