@@ -33,6 +33,31 @@ body {
     justify-content: space-between;
 }
 
+.headerContainer a,
+.addKey {
+    color: white;
+    text-decoration: none;
+    background: hsla(200, 80%, 50%, 0.4);
+    border-radius: 10px;
+    padding: 8px 8px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    border: none;
+}
+
+.addKey {
+    width: fit-content;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.headerContainer a:hover,
+.addKey:hover {
+    background: hsla(220, 80%, 50%, 0.8)
+}
+
 .subHeader {
     font-size: 1.3rem;
 }
