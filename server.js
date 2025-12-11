@@ -14,19 +14,19 @@ app.post('/signup', async (req, res) => {
     const newEmail = (req.body && req.body.email || '').trim()
 
     if (!newEmail){
-        return res.status(400).send({ message: 'Email required' })
+        return res.status(400).json({ message: 'Email required' })
     }
 
     // Email verification, e.g., j.doe@example.com
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(newEmail)){
-            return res.status(400).send({ message: 'Invalid email format' })
+            return res.status(400).json({ message: 'Invalid email format' })
         }
 
     try {
         await db.collection('users').doc(newEmail).set({ 
             email: newEmail,
-            subscribedAt: new Date().toDateString, 
+            subscribedAt: new Date().toISOString(), 
          }, { merge: true })
 
          // Send success response
@@ -37,7 +37,7 @@ app.post('/signup', async (req, res) => {
 
     } catch (err) {
         console.log('Error: ', err)
-        res.status(500).send({ message: 'Failed to register' })
+        res.status(500).json({ message: 'Failed to register' })
     }
 })
 

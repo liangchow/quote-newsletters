@@ -83,6 +83,9 @@
     const errMsg = document.querySelector('.errMsg')
     const subMsg = document.querySelector('.subMsg')
 
+    // Initially, hide all messages
+    errMsg.style.display = "none"
+    subMsg.style.display = "none"
     
     // Email verification criteria, e.g., j.doe@example.com
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -112,7 +115,6 @@
             })
             if (!res.ok){
                 throw new Error('Signup failed')
-                return
             }
 
             // if success
