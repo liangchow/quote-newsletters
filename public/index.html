@@ -83,14 +83,19 @@
     const errMsg = document.querySelector('.errMsg')
     const subMsg = document.querySelector('.subMsg')
 
+    
+    // Email verification criteria, e.g., john.doe@email.com
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    
     async function signupNewUser(){
         const user_email = input.value.trim()
-
-        // Hide all messages
+        
+        // Initially, hide all messages
         errMsg.style.display = "none"
         subMsg.style.display = "none"
-  
-        if (!user_email || !input.checkValidity()){
+
+        // Email verification
+        if (!user_email || !emailRegex.test(user_email)){
             errMsg.style.display = "inline"
             return
         }
@@ -105,18 +110,35 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: user_email })
             })
-            // if (!res.ok){
-            //     errMsg.style.display = 'inline'
-            //     return
-            // }
+            if (!res.ok){
+                throw new Error('Signup failed')
+                return
+            }
+
+            // if success
             subMsg.style.display = 'inline'
             input.value = ''
+
         } catch(err){
+            console.log('Signup error', err)
             errMsg.style.display = 'inline'
+        } finally {
+            // Restore button
+            //signup_btn.style.pointerEvents = 'auto'
+            signup_btn.style.opacity = "1.0"
         }
     }
 
+    // Tied in to button
     signup_btn.addEventListener('click', signupNewUser)
+
+    // Allow Enter key to submit
+    input.addEventListener('keypress', (e) => {
+        if (e.key == "Enter"){
+            signupNewUser()
+        }
+    })
+
 </script>    
 
 </html>
