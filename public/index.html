@@ -85,8 +85,7 @@
 
     async function signupNewUser(){
         const user_email = input.value.trim()
-        errMsg.style.display = 'none'
-        subMsg.style.display = 'none'
+  
         if (!user_email || !input.checkValidity()){
             errMsg.style.display = 'inline'
             return
@@ -97,10 +96,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: user_email })
             })
-            if (!res.ok){
-                errMsg.style.display = 'inline'
-                return
-            }
+            // if (!res.ok){
+            //     errMsg.style.display = 'inline'
+            //     return
+            // }
             subMsg.style.display = 'inline'
             input.value = ''
         } catch(err){

@@ -4,19 +4,20 @@ const app = express()
 const PORT = 1339
 require('dotenv').config
 
-app.use(express.json())
+// Middleware
 app.use(express.static('public'))
 
+// Routes
 app.post('/signup', async (req, res) => {
     const newEmail = (req.body && req.body.email || '').trim()
     if (!newEmail){
-        return res.status(400).json({ error: 'Email required' })
+        return res.status(400).send({ "message": 'Email required' })
     }
     try {
         await db.collection('users').doc(newEmail).set({ email: newEmail }, { merge: true })
-        res.json({ success: true })
+
     } catch (err) {
-        res.status(500).json({ error: 'Failed to register' })
+        res.status(500).send({ "message": 'Failed to register' })
     }
 })
 
