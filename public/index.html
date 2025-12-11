@@ -84,7 +84,7 @@
     const subMsg = document.querySelector('.subMsg')
 
     
-    // Email verification criteria, e.g., john.doe@email.com
+    // Email verification criteria, e.g., j.doe@example.com
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     
     async function signupNewUser(){
@@ -120,7 +120,7 @@
             input.value = ''
 
         } catch(err){
-            console.log('Signup error', err)
+            console.log('Signup error: ', err)
             errMsg.style.display = 'inline'
         } finally {
             // Restore button
