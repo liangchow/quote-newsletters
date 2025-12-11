@@ -85,11 +85,20 @@
 
     async function signupNewUser(){
         const user_email = input.value.trim()
+
+        // Hide all messages
+        errMsg.style.display = "none"
+        subMsg.style.display = "none"
   
         if (!user_email || !input.checkValidity()){
-            errMsg.style.display = 'inline'
+            errMsg.style.display = "inline"
             return
         }
+
+        // Disable button on submit
+        // signup_btn.style.pointerEvents = "none"
+        signup_btn.style.opacity = "0.6" 
+
         try {
             const res = await fetch('/signup', {
                 method: 'POST',

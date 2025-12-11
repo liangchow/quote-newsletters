@@ -5,6 +5,7 @@ const PORT = 1339
 require('dotenv').config
 
 // Middleware
+app.use(express.json())
 app.use(express.static('public'))
 
 // Routes
