@@ -10,60 +10,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
         integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>Quote API</title>
+    <title>QuoteSE</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- <script src="scripts.js"></script> -->
 </head>
 
 <body>
     <div class="container">
         <div class="'headerContainer">
-            <h1>Quote API</h1>
+            <h1>QuoteSE</h1>
         </div>
+    
+
+        <section>
+            <h2 class=""subHeader>Description</h2>
+            <div class="info">
+                <h3>Purpose</h3>
+                <p>To receive weekly inspiring quotes from your favorite scientists and engineers!</p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="subHeader">Subscribe for quotes</h2>
+            <p class="preMsg">Subscribe to weekly inspirational</p>
+            <p class="errMsg">Please ensure your email address is formatted correctly</p>
+            <p class="subMsg">You Are Subscribed!</p>
+            <div class="keyInput">
+                <input id="userEmail" type="email" placeholder="Enter your email" />
+            </div>
+            <div id="signup_btn" class="addKey">
+                <i class="fa-solid fa-check"></i>Subscribe
+            </div>
+        </section>
+
+        <section>
+            <h2 class="subHeader">Submit a quote</h2>
+            <p class="preMsg">Share your favorite quote with the world!</p>
+            <p class="subMsg">Quote Submitted!</p>
+            <div class="info">
+                <h3>Example Quote</h3>
+                <p>"The most fruitful research grows out of practical problems." -Peck, R.B. (Geotechnical Eng.)</p>
+            </div>
+            <form method="POST" class="quoteSubmission">
+                <input type="text" placeholder="Quote" />
+                <input type="text" placeholder="Author (Peck, R.B.)" />
+                <input type="text" placeholder="Field" />
+                <input type="text" placeholder="Source" />
+            </form>
+            <div class="addKey">
+                <i class="fa-solid fa-check"></i>Share
+            </div>
+        </section>
+
+        <section>
+            <div>Buy Me a Coffee</div>
+        </section>
     </div>
-
-    <section>
-        <h2 class=""subHeader>Description</h2>
-        <div class="info">
-            <h3>Purpose</h3>
-            <p>To receive weekly inspiring quotes from your favorite scientists and engineers!</p>
-        </div>
-    </section>
-
-    <section>
-        <h2 class="subHeader">Subscribe for quotes</h2>
-        <p class="preMsg">Join Quote API and subscribe to weekly newsletter</p>
-        <p class="errMsg">Please ensure your email address is formatted correctly</p>
-        <p class="subMsg">You Are Subscribed!</p>
-        <div class="keyInput">
-            <input id="userEmail" type="email" placeholder="Enter your email" />
-        </div>
-        <div id="signup_btn" class="addKey">
-            <i class="fa-solid fa-check"></i>Subscribe
-        </div>
-    </section>
-
-    <section>
-        <h2 class="subHeader">Submit a quote</h2>
-        <p class="preMsg">Share your favorite quote with the world!</p>
-        <p class="subMsg">Quote Submitted!</p>
-        <div class="info">
-            <h3>Example Quote</h3>
-            <p>"The most fruitful research grows out of practical problems." -Peck, R.B. (Geotechnical Eng.)</p>
-        </div>
-        <form method="POST">
-            <input type="text" placeholder="Quote" />
-            <input type="text" placeholder="Author (Peck, R.B.)" />
-            <input type="text" placeholder="Field" />
-            <input type="text" placeholder="Source" />
-        </form>
-        <div>
-            <i class="fa-solid fa-check"></i>Share
-        </div>
-    </section>
-
-    <section>
-        <p>Buy Me a Coffee</p>
-    </section>
 
 </body>
 
@@ -78,7 +80,7 @@
 </footer>
 
 <script>
-    const input = document.getElementById('userEmail')
+    const emailInput = document.getElementById('userEmail')
     const signup_btn = document.getElementById('signup_btn')
     const errMsg = document.querySelector('.errMsg')
     const subMsg = document.querySelector('.subMsg')
@@ -86,12 +88,12 @@
     // Initially, hide all messages
     errMsg.style.display = "none"
     subMsg.style.display = "none"
-    
+
     // Email verification criteria, e.g., j.doe@example.com
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    
+
     async function signupNewUser(){
-        const user_email = input.value.trim()
+        const user_email = emailInput.value.trim()
         
         // Initially, hide all messages
         errMsg.style.display = "none"
@@ -119,7 +121,7 @@
 
             // if success
             subMsg.style.display = 'inline'
-            input.value = ''
+            emailInput.value = ''
 
         } catch(err){
             console.log('Signup error: ', err)
@@ -135,12 +137,12 @@
     signup_btn.addEventListener('click', signupNewUser)
 
     // Allow Enter key to submit
-    input.addEventListener('keypress', (e) => {
+    emailInput.addEventListener('keypress', (e) => {
         if (e.key == "Enter"){
             signupNewUser()
         }
     })
+</script>
 
-</script>    
 
 </html>

@@ -23,7 +23,6 @@ body {
     max-width: 1000px;
     margin: 0 auto;
     gap: 24px;
-    color: lime;
 }
 
 .headerContainer,
@@ -101,12 +100,78 @@ body {
     display: none;
 }
 
+.keyInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.keyInput input:focus-within,
+.quoteSubmission input:focus-within {
+    border-color: blue;
+}
+
+.keyInput input,
+.quoteSubmission input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+    color: white;
+    border: 1px solid navy;
+    border-radius: 10px;
+}
+
+.quoteSubmission {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    border-radius: 4px;
+}
+
 section {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
+
+.footerContainer {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    font-size: 1.3rem;
+}
+
 .footerContainer a:hover {
     color: lime;
+}
+
+@media (min-width: 700px){
+    .container {
+        gap:32px;
+    }
+
+    .headerContainer a {
+        font-size: 1rem;
+    }
+
+    .subHeader {
+        font-size: 1.8rem;
+    }
+
+    .info {
+        gap:16px;
+    }
+
+    .info h3,
+    .info p {
+        font-size: 1rem;
+    }
 }
