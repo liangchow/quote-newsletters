@@ -46,19 +46,19 @@
         <section>
             <h2 class="subHeader">Submit a <span>quote</span></h2>
             <p class="preMsg">Share your favorite <span>quotes</span> with the world!</p>
-            <p class="subMsg"><span>Quote Submitted! You Will Be Notified When Your Quote Is Verified.</p>
+            <p class="quoteSubMsg"><span>Quote Submitted! You Will Be Notified When Your Quote Is Verified.</p>
             <div class="info">
                 <h3>Example Quote</h3>
                 <p>"The most fruitful research grows out of practical problems." -Peck, R.B. (Geotechnical Eng.)</p>
             </div>
             <form method="POST" class="quoteSubmission">
-                <input type="text" placeholder="Quote" />
-                <input type="text" placeholder="Author (Peck, R.B.)" />
-                <input type="text" placeholder="Field (Geotechnical Eng.)" />
-                <input type="text" placeholder="Provide a source or reference to verify quote" />
-                <input type="text" placeholder="Enter your email to receive notification" />
+                <input id="quoteText" type="text" placeholder="Quote" />
+                <input id="quoteAuthor" type="text" placeholder="Author (Peck, R.B.)" />
+                <input id="quoteArea" type="text" placeholder="Area or field (Geotechnical Eng.)" />
+                <input id="quoteSource" type="text" placeholder="Provide a source or reference to verify quote" />
+                <input id="quoteEmail" type="text" placeholder="Enter your email to receive notification" />
             </form>
-            <div class="addKey">
+            <div id="share_btn" class="addKey">
                 <i class="fa-solid fa-check"></i>Share
             </div>
         </section>
@@ -82,13 +82,23 @@
 
 <script>
     const emailInput = document.getElementById('userEmail')
+    const quoteTextInput = document.getElementById('quoteText')
+    const quoteAuthorInput = document.getElementById('quoteAuthor')
+    const quoteAreaInput = document.getElementById('quoteArea')
+    const quoteSourceInput = document.getElementById('quoteSource')
+    const quoteEmailInput = document.getElementById('quoteEmail')
+
     const signup_btn = document.getElementById('signup_btn')
+    const share_btn = document.getElementById('share_btn')
+
     const errMsg = document.querySelector('.errMsg')
     const subMsg = document.querySelector('.subMsg')
-
+    const subMsg = document.querySelector('.quoteSubMsg')
+    
     // Initially, hide all messages
     errMsg.style.display = "none"
     subMsg.style.display = "none"
+    quoteSubMsg.style.display = "none"
 
     // Email verification criteria, e.g., j.doe@example.com
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -134,8 +144,50 @@
         }
     }
 
+    async function submitQuote(){
+        const user_email = emailInput.value.trim()
+        
+        // Initially, hide all messages
+        errMsg.style.display = "none"
+        subMsg.style.display = "none"
+
+        // Email verification
+        if (!user_email || !emailRegex.test(user_email)){
+            errMsg.style.display = "inline"
+            return
+        }
+
+        // Disable button on submit
+        // signup_btn.style.pointerEvents = "none"
+        signup_btn.style.opacity = "0.6" 
+
+        try {
+            const res = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user_email })
+            })
+            if (!res.ok){
+                throw new Error('Signup failed')
+            }
+
+            // if success
+            subMsg.style.display = 'inline'
+            emailInput.value = ''
+
+        } catch(err){
+            console.log('Signup error: ', err)
+            errMsg.style.display = 'inline'
+        } finally {
+            // Restore button
+            //signup_btn.style.pointerEvents = 'auto'
+            signup_btn.style.opacity = "1.0"
+        }
+    }
+
     // Tied in to button
     signup_btn.addEventListener('click', signupNewUser)
+    share_btn.addEventListener('click', submitQuote)
 
     // Allow Enter key to submit
     emailInput.addEventListener('keypress', (e) => {
