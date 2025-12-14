@@ -53,11 +53,9 @@
                 <p>"The most fruitful research grows out of practical problems." -Peck, R.B. (Geotechnical Eng.)</p>
             </div>
             <form method="POST" class="quoteSubmission">
-                <input id="quoteText" type="text" placeholder="Quote" required />
-                <input id="quoteAuthor" type="text" placeholder="Author (Peck, R.B.)" required />
-                <input id="quoteArea" type="text" placeholder="Area or field (Geotechnical Eng.)" />
-                <input id="quoteSource" type="text" placeholder="Provide a source or reference to verify quote" />
-                <input id="quoteEmail" type="text" placeholder="Enter your email to receive notification" required />
+                <input id="quoteText" type="text" placeholder="Quote (The most fruitful research grows out of practical problems)" class="gridInput1" required />
+                <input id="quoteAuthor" type="text" placeholder="Author (Peck, R.B.)" class="gridInput2" required />
+                <input id="quoteArea" type="text" placeholder="Area or field (Geotechnical Eng.)" class="gridInput3" required />
             </form>
             <div id="share_btn" class="addKey">
                 <i class="fa-solid fa-check"></i>Share
@@ -86,8 +84,6 @@
     const quoteTextInput = document.getElementById('quoteText')
     const quoteAuthorInput = document.getElementById('quoteAuthor')
     const quoteAreaInput = document.getElementById('quoteArea')
-    const quoteSourceInput = document.getElementById('quoteSource')
-    const quoteEmailInput = document.getElementById('quoteEmail')
 
     const signup_btn = document.getElementById('signup_btn')
     const share_btn = document.getElementById('share_btn')
@@ -149,8 +145,6 @@
         const quote_text = quoteTextInput.value.trim()
         const quote_author = quoteAuthorInput.value.trim()
         const quote_area = quoteAreaInput.value.trim()
-        const quote_source = quoteSourceInput.value.trim()
-        const quote_email = quoteEmailInput.value.trim()
         
         // Initially, hide all messages
         quoteErrMsg.style.display = "none"
@@ -158,13 +152,7 @@
 
         // Required field
         if (!quoteTextInput){
-            
-        }
 
-        // Email verification
-        if (!quoteEmailInput || !emailRegex.test(quoteEmailInput)){
-            quoteErrMsg.style.display = "inline"
-            return
         }
 
         // Disable button on submit
@@ -179,8 +167,6 @@
                     text: quote_text,
                     author: quote_author,
                     area : quote_area,
-                    source: quote_source,
-                    email: quote_email,
                 })
             })
             if (!res.ok){
@@ -192,8 +178,6 @@
             quoteTextInput.value = ''
             quoteAuthorInput.value = ''
             quoteAreaInput.value = ''
-            quoteSourceInput.value = ''
-            quoteEmailInput.value = ''
 
         } catch(err){
             console.log('Submission error: ', err)
