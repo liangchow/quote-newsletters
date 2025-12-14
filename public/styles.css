@@ -106,6 +106,16 @@ span {
     display: none;
 }
 
+.quoteErrMsg {
+    color: coral;
+    display: none;
+}
+
+.quoteSubMsg {
+    color: lime;
+    display: none;
+}
+
 .keyInput {
     display: flex;
     align-items: center;
