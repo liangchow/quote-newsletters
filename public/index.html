@@ -46,17 +46,18 @@
         <section>
             <h2 class="subHeader">Submit a <span>quote</span></h2>
             <p class="preMsg">Share your favorite <span>quotes</span> with the world!</p>
+            <p class="quoteErrMsg">Please ensure your email address is formatted correctly</p>
             <p class="quoteSubMsg"><span>Quote Submitted! You Will Be Notified When Your Quote Is Verified.</p>
             <div class="info">
                 <h3>Example Quote</h3>
                 <p>"The most fruitful research grows out of practical problems." -Peck, R.B. (Geotechnical Eng.)</p>
             </div>
             <form method="POST" class="quoteSubmission">
-                <input id="quoteText" type="text" placeholder="Quote" />
-                <input id="quoteAuthor" type="text" placeholder="Author (Peck, R.B.)" />
+                <input id="quoteText" type="text" placeholder="Quote" required />
+                <input id="quoteAuthor" type="text" placeholder="Author (Peck, R.B.)" required />
                 <input id="quoteArea" type="text" placeholder="Area or field (Geotechnical Eng.)" />
                 <input id="quoteSource" type="text" placeholder="Provide a source or reference to verify quote" />
-                <input id="quoteEmail" type="text" placeholder="Enter your email to receive notification" />
+                <input id="quoteEmail" type="text" placeholder="Enter your email to receive notification" required />
             </form>
             <div id="share_btn" class="addKey">
                 <i class="fa-solid fa-check"></i>Share
@@ -145,43 +146,62 @@
     }
 
     async function submitQuote(){
-        const user_email = emailInput.value.trim()
+        const quote_text = quoteTextInput.value.trim()
+        const quote_author = quoteAuthorInput.value.trim()
+        const quote_area = quoteAreaInput.value.trim()
+        const quote_source = quoteSourceInput.value.trim()
+        const quote_email = quoteEmailInput.value.trim()
         
         // Initially, hide all messages
-        errMsg.style.display = "none"
-        subMsg.style.display = "none"
+        quoteErrMsg.style.display = "none"
+        quoteSubMsg.style.display = "none"
+
+        // Required field
+        if (!quoteTextInput){
+            
+        }
 
         // Email verification
-        if (!user_email || !emailRegex.test(user_email)){
-            errMsg.style.display = "inline"
+        if (!quoteEmailInput || !emailRegex.test(quoteEmailInput)){
+            quoteErrMsg.style.display = "inline"
             return
         }
 
         // Disable button on submit
         // signup_btn.style.pointerEvents = "none"
-        signup_btn.style.opacity = "0.6" 
+        share_btn.style.opacity = "0.6" 
 
         try {
-            const res = await fetch('/signup', {
+            const res = await fetch('/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: user_email })
+                body: JSON.stringify({ 
+                    text: quote_text,
+                    author: quote_author,
+                    area : quote_area,
+                    source: quote_source,
+                    email: quote_email,
+                })
             })
             if (!res.ok){
-                throw new Error('Signup failed')
+                throw new Error('Submission failed')
             }
 
             // if success
-            subMsg.style.display = 'inline'
-            emailInput.value = ''
+            quoteSubMsg.style.display = 'inline'
+            quoteTextInput.value = ''
+            quoteAuthorInput.value = ''
+            quoteAreaInput.value = ''
+            quoteSourceInput.value = ''
+            quoteEmailInput.value = ''
 
         } catch(err){
-            console.log('Signup error: ', err)
-            errMsg.style.display = 'inline'
+            console.log('Submission error: ', err)
+            quoteSubMsg.style.display = 'inline'
         } finally {
             // Restore button
-            //signup_btn.style.pointerEvents = 'auto'
-            signup_btn.style.opacity = "1.0"
+            //share_btn.style.pointerEvents = 'auto'
+            share_btn.style.opacity = "1.0"
         }
     }
 
