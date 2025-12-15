@@ -1,6 +1,6 @@
 const express = require('express')
 const { db } = require('./firebase')
-const { collection, addDoc } = require('firebaes/firestore')
+const { collection, addDoc } = require('firebase/firestore')
 const app = express()
 const PORT = process.env.PORT || 1339
 require('dotenv').config
@@ -30,6 +30,12 @@ app.post('/signup', async (req, res) => {
     if (!emailRegex.test(newEmail)){
             return res.status(400).json({ message: 'Invalid email format' })
         }
+
+    // Check if email already exists
+    const userDoc = await db.collection('users').doc(newEmail).get()
+    if (userDoc.exists){
+        return res.status(200).json({message: "You're already subscribed"})
+    }
 
     try {
         await db.collection('users').doc(newEmail).set({ 
