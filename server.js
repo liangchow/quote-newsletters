@@ -41,4 +41,36 @@ app.post('/signup', async (req, res) => {
     }
 })
 
+app.post('/submit', async (req, res) => {
+    // Safety clause
+    const newText = (req.body && req.body.text || '').trim()
+    const newAuthor = (req.body && req.body.author || '').trim()
+    const newArea = (req.body && req.body.area || '').trim()
+
+    if (!newText || !newAuthor || !newArea){
+        return res.status(400).json({ message: 'Input required' })
+    }
+
+    try {
+        await db.collection('quotes').doc(newEmail).set({ 
+            text: newText,
+            author: newAuthor,
+            area: newArea,
+            subscribedAt: new Date().toISOString(), 
+         }, { merge: true })
+
+         // Send success response
+         res.status(200).json({
+            message: "Sucessfully submitted",
+            text: newText,
+            author: newAuthor,
+            area: newArea,
+         })
+
+    } catch (err) {
+        console.log('Error: ', err)
+        res.status(500).json({ message: 'Failed to submit' })
+    }
+})
+
 app.listen(PORT, () => console.log(`Server has started on port: ${PORT}`))
