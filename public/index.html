@@ -118,7 +118,7 @@
         const user_email = trimInput(emailInput.value)
         
         // Initially, hide all subscription messages
-        hideMessages(errMsg, subMsg)
+        hideMessages([errMsg, subMsg])
 
         // Email verification
         if (!user_email || !emailRegex.test(user_email)){
@@ -155,18 +155,17 @@
     }
 
     async function submitQuote(){
-        const quote_text = quoteTextInput.value.trim()
-        const quote_author = quoteAuthorInput.value.trim()
-        const quote_area = quoteAreaInput.value.trim()
+        const quote_text = trimInput(quoteTextInput.value)
+        const quote_author = trimInput(quoteAuthorInput.value)
+        const quote_area = trimInput(quoteAreaInput.value)
         
-        // Initially, hide all messages
-        quoteErrMsg.style.display = "none"
-        quoteSubMsg.style.display = "none"
+        // Initially, hide all submission messages
+        hideMessages([quoteErrMsg, quoteSubMsg])
 
         // Required field
-        // if (!quoteTextInput){
-
-        // }
+        if (!quote_text || !quote_author || !quote_area){
+            quoteErrMsg.style.display = 'inline'
+        }
 
         // Disable button on submit
         // share_btn.style.pointerEvents = "none"
@@ -188,9 +187,7 @@
 
             // if success
             quoteSubMsg.style.display = 'inline'
-            quoteTextInput.value = ''
-            quoteAuthorInput.value = ''
-            quoteAreaInput.value = ''
+            quoteForm.reset()
 
         } catch(err){
             console.log('Submission error: ', err)
@@ -209,9 +206,18 @@
     // Allow Enter key to submit
     emailInput.addEventListener('keypress', (e) => {
         if (e.key == "Enter"){
+            e.preventDefault()
             signupNewUser()
         }
     })
+
+    quoteForm.addEventListener('keypress', (e) => {
+        if (e.key == "Enter" && !e.shiftKey){
+            e.preventDefault()
+            submitQuote()
+        }
+    })
+
 </script>
 
 
