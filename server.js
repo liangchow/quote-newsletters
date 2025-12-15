@@ -3,7 +3,7 @@ const { db } = require('./firebase')
 const { collection, addDoc } = require('firebase/firestore')
 const app = express()
 const PORT = process.env.PORT || 1339
-require('dotenv').config
+require('dotenv').config()
 
 // Middleware
 app.use(express.json({limit: '10kb'})) // Limit payload size for security
@@ -17,27 +17,27 @@ function trimInput(input){
 
 // Routes
 app.post('/signup', async (req, res) => {
-    // Safety clause
-    const rawEmail = req.body?.email || ''
-    const newEmail = trimInput(rawEmail).toLowerCase()
+    try {
+        // Safety clause
+        const rawEmail = req.body?.email || ''
+        const newEmail = trimInput(rawEmail).toLowerCase()
 
-    if (!newEmail){
-        return res.status(400).json({ message: 'Email required' })
-    }
-
-    // Email verification, e.g., j.doe@example.com
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(newEmail)){
-            return res.status(400).json({ message: 'Invalid email format' })
+        if (!newEmail){
+            return res.status(400).json({ message: 'Email required' })
         }
 
-    // Check if email already exists
-    const userDoc = await db.collection('users').doc(newEmail).get()
-    if (userDoc.exists){
-        return res.status(200).json({message: "You're already subscribed"})
-    }
+        // Email verification, e.g., j.doe@example.com
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(newEmail)){
+                return res.status(400).json({ message: 'Invalid email format' })
+            }
 
-    try {
+        // Check if email already exists
+        const userDoc = await db.collection('users').doc(newEmail).get()
+        if (userDoc.exists){
+            return res.status(200).json({message: "You're already subscribed"})
+        }
+
         await db.collection('users').doc(newEmail).set({ 
             email: newEmail,
             subscribedAt: new Date().toISOString(),
@@ -57,25 +57,26 @@ app.post('/signup', async (req, res) => {
 })
 
 app.post('/submit', async (req, res) => {
-    // Safety clause
-    const rawText = req.body?.text || ''
-    const rawAuthor = req.body?.text || ''
-    const rawArea = req.body?.text || ''
-
-    const newText = trimInput(rawText)
-    const newAuthor = trimInput(rawAuthor)
-    const newArea = trimInput(rawArea)
-
-    if (!newText || !newAuthor || !newArea){
-        return res.status(400).json({ message: 'Input required' })
-    }
-
     try {
-        await addDoc(collection(db,'quotes'),{     
+        // Safety clause
+        const rawText = req.body?.text || ''
+        const rawAuthor = req.body?.author || ''
+        const rawArea = req.body?.area || ''
+
+        const newText = trimInput(rawText)
+        const newAuthor = trimInput(rawAuthor)
+        const newArea = trimInput(rawArea)
+
+        if (!newText || !newAuthor || !newArea){
+            return res.status(400).json({ message: 'Input required' })
+        }
+
+        const docRef = await addDoc(collection(db,'quotes'),{     
             text: newText,
             author: newAuthor,
             area: newArea,
-            subscribedAt: new Date().toISOString(), 
+            submittedAt: new Date().toISOString(),
+            approved: false 
          }, { merge: true })
 
          // Send success response
