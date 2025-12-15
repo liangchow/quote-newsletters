@@ -1,17 +1,25 @@
 const express = require('express')
 const { db } = require('./firebase')
+const { collection, addDoc } = require('firebaes/firestore')
 const app = express()
-const PORT = 1339
+const PORT = process.env.PORT || 1339
 require('dotenv').config
 
 // Middleware
-app.use(express.json())
+app.use(express.json({limit: '10kb'})) // Limit payload size for security
 app.use(express.static('public'))
+
+// Utility functions
+function trimInput(input){
+    if (typeof input !== 'string') return ''
+    return input.trim().replace(/[<>]/g, '')
+}
 
 // Routes
 app.post('/signup', async (req, res) => {
     // Safety clause
-    const newEmail = (req.body && req.body.email || '').trim()
+    const rawEmail = req.body?.email || ''
+    const newEmail = trimInput(rawEmail).toLowerCase()
 
     if (!newEmail){
         return res.status(400).json({ message: 'Email required' })
@@ -26,7 +34,8 @@ app.post('/signup', async (req, res) => {
     try {
         await db.collection('users').doc(newEmail).set({ 
             email: newEmail,
-            subscribedAt: new Date().toISOString(), 
+            subscribedAt: new Date().toISOString(),
+            active: true, 
          }, { merge: true })
 
          // Send success response
@@ -43,9 +52,13 @@ app.post('/signup', async (req, res) => {
 
 app.post('/submit', async (req, res) => {
     // Safety clause
-    const newText = (req.body && req.body.text || '').trim()
-    const newAuthor = (req.body && req.body.author || '').trim()
-    const newArea = (req.body && req.body.area || '').trim()
+    const rawText = req.body?.text || ''
+    const rawAuthor = req.body?.text || ''
+    const rawArea = req.body?.text || ''
+
+    const newText = trimInput(rawText)
+    const newAuthor = trimInput(rawAuthor)
+    const newArea = trimInput(rawArea)
 
     if (!newText || !newAuthor || !newArea){
         return res.status(400).json({ message: 'Input required' })
