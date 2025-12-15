@@ -1,6 +1,5 @@
 const express = require('express')
 const { db } = require('./firebase')
-const { collection, addDoc } = require('firebase/firestore')
 const app = express()
 const PORT = process.env.PORT || 1339
 require('dotenv').config()
@@ -71,17 +70,17 @@ app.post('/submit', async (req, res) => {
             return res.status(400).json({ message: 'Input required' })
         }
 
-        const docRef = await addDoc(collection(db,'quotes'),{     
+        await db.collection('quotes').add({
             text: newText,
             author: newAuthor,
             area: newArea,
             submittedAt: new Date().toISOString(),
-            approved: false 
-         }, { merge: true })
+            approved: false
+        })
 
          // Send success response
          res.status(200).json({
-            message: "Sucessfully submitted",
+            message: "Successfully submitted",
             text: newText,
             author: newAuthor,
             area: newArea,

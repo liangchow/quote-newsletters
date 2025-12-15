@@ -81,18 +81,18 @@
 
 <script>
     const emailInput = document.getElementById('userEmail')
-    const quoteForm = document.getElementById('quoteSubmission')
     const quoteTextInput = document.getElementById('quoteText')
     const quoteAuthorInput = document.getElementById('quoteAuthor')
     const quoteAreaInput = document.getElementById('quoteArea')
-
+    
     const signup_btn = document.getElementById('signup_btn')
     const share_btn = document.getElementById('share_btn')
-
+    
     const errMsg = document.querySelector('.errMsg')
     const subMsg = document.querySelector('.subMsg')
     const quoteErrMsg = document.querySelector('.quoteErrMsg')
     const quoteSubMsg = document.querySelector('.quoteSubMsg')
+    const quoteForm = document.querySelector('.quoteSubmission')
     
     // Initially, hide all messages
     // errMsg.style.display = "none"
@@ -196,6 +196,7 @@
             // Restore button
             //share_btn.style.pointerEvents = 'auto'
             share_btn.style.opacity = "1.0"
+            quoteForm.reset()
         }
     }
 
