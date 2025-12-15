@@ -52,7 +52,7 @@ app.post('/submit', async (req, res) => {
     }
 
     try {
-        await db.collection('quotes').doc(newEmail).set({ 
+        await addDoc(collection(db,'quotes'),{     
             text: newText,
             author: newAuthor,
             area: newArea,
