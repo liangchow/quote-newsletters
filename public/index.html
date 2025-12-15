@@ -46,7 +46,7 @@
         <section>
             <h2 class="subHeader">Submit a <span>quote</span></h2>
             <p class="preMsg">Share your favorite <span>quotes</span> with the world!</p>
-            <p class="quoteErrMsg">All Fields Are Required</p>
+            <p class="quoteErrMsg">Submission Failed. All Fields Are Required</p>
             <p class="quoteSubMsg">Quote Submitted!</p>
             <div class="info">
                 <h3>Example Quote</h3>
@@ -191,7 +191,7 @@
 
         } catch(err){
             console.log('Submission error: ', err)
-            quoteSubMsg.style.display = 'inline'
+            quoteErrMsg.style.display = 'inline'
         } finally {
             // Restore button
             //share_btn.style.pointerEvents = 'auto'
