@@ -2,6 +2,7 @@ const express = require('express')
 const { db } = require('./firebase')
 const app = express()
 const PORT = process.env.PORT || 1339
+import { FieldValue, Timestamp } from 'firebase-admin/firestore'
 require('dotenv').config()
 
 // Middleware
@@ -70,11 +71,17 @@ app.post('/submit', async (req, res) => {
             return res.status(400).json({ message: 'Input required' })
         }
 
+        const {submittedAt, index} = await db.collection("collectionName").orderBy("submittedAt", "desc").get();
+        if (submittedAt < Timestamp.now()){
+            newIndex = index + 1
+        }
+
         await db.collection('quotes').add({
+            index: newIndex,
             text: newText,
             author: newAuthor,
             area: newArea,
-            submittedAt: new Date().toISOString(),
+            submittedAt: FieldValue.serverTimestamp(),
             approved: false
         })
 
