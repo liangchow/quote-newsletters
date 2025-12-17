@@ -2,6 +2,7 @@ const emailInput = document.getElementById('userEmail')
 const quoteTextInput = document.getElementById('quoteText')
 const quoteAuthorInput = document.getElementById('quoteAuthor')
 const quoteAreaInput = document.getElementById('quoteArea')
+const quoteDisplay = document.getElementById('quoteDisplay')
 
 const signup_btn = document.getElementById('signup_btn')
 const share_btn = document.getElementById('share_btn')
@@ -117,6 +118,28 @@ async function submitQuote(){
         quoteForm.reset()
     }
 }
+
+async function getRandomQuote(){
+
+    try {
+        const res = await fetch('/get_quote', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                text: quote_text,
+                author: quote_author,
+                area : quote_area,
+            })
+        })
+        if (!res.ok){
+            throw new Error('Submission failed')
+        }
+
+    } catch(err){
+        console.log('Failed to get quote', err)
+    }
+}
+
 
 // Tied in to button
 signup_btn.addEventListener('click', signupNewUser)

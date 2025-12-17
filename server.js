@@ -92,4 +92,16 @@ app.post('/submit', async (req, res) => {
     }
 })
 
+app.get('/get_quote', async (res, req) => {
+    try {
+        const userDoc = await db.collection('quotes').doc(newEmail).get()
+        if (userDoc.exists){
+            return res.status(200).json({message: "You're already subscribed"})
+        }
+    } catch(err){
+        console.log('Error: ', err)
+        res.status(500).json({ message: 'Failed to retrieve quote' })        
+    }
+})
+
 app.listen(PORT, () => console.log(`Server has started on port: ${PORT}`))
