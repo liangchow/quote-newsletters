@@ -38,6 +38,10 @@ span {
     justify-content: space-between;
 }
 
+.headerContainer p {
+    color: cyan;
+}
+
 .headerContainer a,
 .addKey {
     color: white;
