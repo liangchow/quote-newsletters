@@ -71,9 +71,15 @@ app.post('/submit', async (req, res) => {
             return res.status(400).json({ message: 'Input required' })
         }
 
-        const {submittedAt, index} = await db.collection("collectionName").orderBy("submittedAt", "desc").get();
-        if (submittedAt < Timestamp.now()){
-            newIndex = index + 1
+        const snapshot = await db.collection("quotes").orderBy("index", "desc").limit(1).get()
+        let newIndex = 1
+
+        if (!snapshot.empty) {
+            const lastDoc = snapshot.docs[0]
+            const lastData = lastDoc.data()
+            if (typeof lastData.index === 'number') {
+                newIndex = lastData.index + 1
+            }
         }
 
         await db.collection('quotes').add({
@@ -88,6 +94,7 @@ app.post('/submit', async (req, res) => {
          // Send success response
          res.status(200).json({
             message: "Successfully submitted",
+            index: newIndex,
             text: newText,
             author: newAuthor,
             area: newArea,
