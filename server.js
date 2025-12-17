@@ -2,7 +2,7 @@ const express = require('express')
 const { db } = require('./firebase')
 const app = express()
 const PORT = process.env.PORT || 1339
-import { FieldValue, Timestamp } from 'firebase-admin/firestore'
+const { FieldValue, Timestamp } = require('firebase-admin/firestore')
 require('dotenv').config()
 
 // Middleware
@@ -40,13 +40,13 @@ app.post('/signup', async (req, res) => {
 
         await db.collection('users').doc(newEmail).set({ 
             email: newEmail,
-            subscribedAt: new Date().toISOString(),
+            subscribedAt: FieldValue.serverTimestamp(),
             active: true, 
          }, { merge: true })
 
          // Send success response
          res.status(200).json({
-            message: "Sucessfully subscribed",
+            message: "Successfully subscribed",
             email: newEmail,
          })
 
