@@ -15,6 +15,10 @@ function trimInput(input){
     return input.trim().replace(/[<>]/g, '')
 }
 
+function getRandomInteger(min = 0, max){
+    return Math.floor(Math.random() * (max-min)) + min
+}
+
 // Routes
 app.post('/signup', async (req, res) => {
     try {
@@ -107,24 +111,24 @@ app.post('/submit', async (req, res) => {
     }
 })
 
-app.get('/get_quote', async (res, req) => {
-
+app.post('/get_quote', async (res, req) => {
     try {
         const snapshot = await db.collection('quotes').orderBy('index', 'desc').limit(1).get()
 
         if (!snapshot.empty) {
-            const lastDoc = snapshot.docs[0]
-            const lastData = lastDoc.data()
-            if (typeof lastData.index === 'number') {
-                random_index = lastData.index + 1
-            }
+            const lastIndex = snapshot.data().index
+            // const lastIndex = snapshot.docs[0].data().index
+            const targetIndex = getRandomInteger(min, lastIndex)
         }
 
-        const doc = await db.collection('quotes').where('approved', '==', true).where('index', '==', targetIndex).get()
+        const querySnapshot = await db.collection('quotes').where('approved', '==', true).where('index', '=<', targetIndex).limit(1).get()
 
-        if (doc.exists){
-            return res.status(200).json({message: "Get quote successfully"})
+        if (querySnapshot.exists){
+            const quoteData = {id: querySnapshot.id, ...querySnapshot.data()}
+            console.log(quoteData)
+            return res.status(200).json(quoteData)
         }
+
     } catch(err){
         console.log('Error: ', err)
         res.status(500).json({ message: 'Failed to retrieve quote' })        
