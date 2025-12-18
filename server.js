@@ -15,8 +15,10 @@ function trimInput(input){
     return input.trim().replace(/[<>]/g, '')
 }
 
-function getRandomInteger(min = 0, max){
-    return Math.floor(Math.random() * (max-min)) + min
+function getRandomInteger(min, max){
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max-min+1)) + min
 }
 
 // Routes
@@ -111,22 +113,31 @@ app.post('/submit', async (req, res) => {
     }
 })
 
-app.post('/get_quote', async (res, req) => {
+app.get('/get_random_quote', async (req, res) => {
     try {
         const snapshot = await db.collection('quotes').orderBy('index', 'desc').limit(1).get()
+        let targetIndex;
 
         if (!snapshot.empty) {
-            const lastIndex = snapshot.data().index
-            // const lastIndex = snapshot.docs[0].data().index
-            const targetIndex = getRandomInteger(min, lastIndex)
+            const lastData = snapshot.docs[0].data()
+            if (typeof lastData.index === 'number'){
+                const lastIndex = lastData.index
+                targetIndex = getRandomInteger(1, lastIndex)
+                console.log("Random index is: ", targetIndex)
+            }
+        } else {
+            return res.status(500).json({message: 'Index not in db.'})
         }
 
-        const querySnapshot = await db.collection('quotes').where('approved', '==', true).where('index', '=<', targetIndex).limit(1).get()
+        const querySnapshot = await db.collection('quotes').where('approved', '==', true).where('index', '==', targetIndex).limit(1).get()
 
-        if (querySnapshot.exists){
-            const quoteData = {id: querySnapshot.id, ...querySnapshot.data()}
+        if (!querySnapshot.empty){
+            const quoteDoc = querySnapshot.docs[0]
+            const quoteData = {id: quoteDoc.id, ...quoteDoc.data()}
             console.log(quoteData)
             return res.status(200).json(quoteData)
+        } else {
+            return res.status(404).json({message: "No quote found for approved and random index."})
         }
 
     } catch(err){
