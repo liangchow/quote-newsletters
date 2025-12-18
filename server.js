@@ -1,8 +1,8 @@
 const express = require('express')
 const { db } = require('./firebase')
+const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
 const PORT = process.env.PORT || 1339
-const { FieldValue, Timestamp } = require('firebase-admin/firestore')
 require('dotenv').config()
 
 // Middleware
@@ -71,7 +71,8 @@ app.post('/submit', async (req, res) => {
             return res.status(400).json({ message: 'Input required' })
         }
 
-        const snapshot = await db.collection("quotes").orderBy("index", "desc").limit(1).get()
+        // Indexing quote
+        const snapshot = await db.collection('quotes').orderBy('index', 'desc').limit(1).get()
         let newIndex = 1
 
         if (!snapshot.empty) {
@@ -107,10 +108,22 @@ app.post('/submit', async (req, res) => {
 })
 
 app.get('/get_quote', async (res, req) => {
+
     try {
-        const userDoc = await db.collection('quotes').doc(newEmail).get()
-        if (userDoc.exists){
-            return res.status(200).json({message: "You're already subscribed"})
+        const snapshot = await db.collection('quotes').orderBy('index', 'desc').limit(1).get()
+
+        if (!snapshot.empty) {
+            const lastDoc = snapshot.docs[0]
+            const lastData = lastDoc.data()
+            if (typeof lastData.index === 'number') {
+                random_index = lastData.index + 1
+            }
+        }
+
+        const doc = await db.collection('quotes').where('approved', '==', true).where('index', '==', targetIndex).get()
+
+        if (doc.exists){
+            return res.status(200).json({message: "Get quote successfully"})
         }
     } catch(err){
         console.log('Error: ', err)

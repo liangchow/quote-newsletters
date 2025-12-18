@@ -120,7 +120,6 @@ async function submitQuote(){
 }
 
 async function getRandomQuote(){
-
     try {
         const res = await fetch('/get_quote', {
             method: 'GET',
