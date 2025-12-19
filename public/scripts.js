@@ -2,7 +2,9 @@ const emailInput = document.getElementById('userEmail')
 const quoteTextInput = document.getElementById('quoteText')
 const quoteAuthorInput = document.getElementById('quoteAuthor')
 const quoteAreaInput = document.getElementById('quoteArea')
-const quoteDisplay = document.getElementById('quoteDisplay')
+const quoteTextOutput = document.getElementById('quoteTextDisplay');
+const quoteAuthorOutput = document.getElementById('quoteAuthorDisplay');
+const quoteAreaOutput = document.getElementById('quoteAreaDisplay')
 
 const signup_btn = document.getElementById('signup_btn')
 const share_btn = document.getElementById('share_btn')
@@ -119,9 +121,9 @@ async function submitQuote(){
     }
 }
 
-async function getRandomQuote(){
+async function fetchRandomQuote(){
     try {
-        const res = await fetch('/get_quote', {
+        const res = await fetch('/get_random_quote', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -134,15 +136,20 @@ async function getRandomQuote(){
             throw new Error('Submission failed')
         }
 
+        quoteTextOutput.textContent = `"${quote_text}"`
+        quoteAuthorOutput.textContent = `-${quote_author} || -Unknown`
+        quoteAreaOutput.textContent = `(${quote_area})`
+
     } catch(err){
         console.log('Failed to get quote', err)
     }
 }
 
 
-// Tied in to button
+// Tied in to button and DOM
 signup_btn.addEventListener('click', signupNewUser)
 share_btn.addEventListener('click', submitQuote)
+document.addEventListener('DOMContentLoaded', fetchRandomQuote)
 
 // Allow Enter key to submit
 emailInput.addEventListener('keypress', (e) => {

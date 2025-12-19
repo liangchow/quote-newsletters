@@ -67,6 +67,11 @@ span {
     background: hsla(220, 80%, 50%, 0.8)
 }
 
+.quoteContainer {
+    display: flex;
+    gap: 10px;
+}
+
 .subHeader {
     font-size: 1.3rem;
 }
@@ -182,6 +187,10 @@ section {
 
     .headerContainer a {
         font-size: 1rem;
+    }
+
+    .quoteContainer{
+        text-wrap: unset;
     }
 
     .subHeader {
