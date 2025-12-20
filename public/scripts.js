@@ -131,7 +131,7 @@ async function fetchRandomQuote(){
         }
 
         quoteTextOutput.textContent = `"${quote.text}"`
-        quoteAuthorOutput.textContent = `-${quote.author} || -Unknown`
+        quoteAuthorOutput.textContent = `-${quote.author || -Unknown}`
         quoteAreaOutput.textContent = `(${quote.area})`
 
     } catch(err){
