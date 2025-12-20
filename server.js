@@ -38,9 +38,9 @@ app.post('/signup', async (req, res) => {
                 return res.status(400).json({ message: 'Invalid email format' })
             }
 
-        // Check if email already exists
+        // Check if email already exists and is active
         const userDoc = await db.collection('users').doc(newEmail).get()
-        if (userDoc.exists){
+        if (userDoc.exists && userDoc.data().active === true){
             return res.status(400).json({message: "You're already subscribed"})
         }
 

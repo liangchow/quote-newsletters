@@ -65,7 +65,7 @@ async function signupNewUser(){
             throw new Error(data.message || 'Signup failed')
         }
 
-        // if success
+        // Conditional
         if (data.message === "You're already subscribed") {
             errSubMsg.style.display = 'inline'
         } else {
