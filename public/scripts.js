@@ -122,6 +122,11 @@ async function submitQuote(){
 }
 
 async function fetchRandomQuote(){
+    // Loading
+    quoteTextOutput.textContent = "Loading a new quote...."
+    quoteAuthorOutput.textContent = ""
+    quoteAreaOutput.textContent = ""
+
     try {
         const res = await fetch('/get_random_quote')
         const quote = await res.json()
@@ -133,6 +138,8 @@ async function fetchRandomQuote(){
         quoteTextOutput.textContent = `"${quote.text}"`
         quoteAuthorOutput.textContent = `-${quote.author || -Unknown}`
         quoteAreaOutput.textContent = `(${quote.area})`
+
+        quoteTextInput.textContent = `Quote (${quote.text})`
 
     } catch(err){
         console.log('Failed to get quote', err)
