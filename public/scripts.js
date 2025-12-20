@@ -10,6 +10,7 @@ const signup_btn = document.getElementById('signup_btn')
 const share_btn = document.getElementById('share_btn')
 
 const errMsg = document.querySelector('.errMsg')
+const errSubMsg = document.querySelector('.errSubMsg')
 const subMsg = document.querySelector('.subMsg')
 const quoteErrMsg = document.querySelector('.quoteErrMsg')
 const quoteSubMsg = document.querySelector('.quoteSubMsg')
@@ -39,7 +40,7 @@ async function signupNewUser(){
     const user_email = trimInput(emailInput.value)
     
     // Initially, hide all subscription messages
-    hideMessages([errMsg, subMsg])
+    hideMessages([errMsg, errSubMsg, subMsg])
 
     // Email verification
     if (!user_email || !emailRegex.test(user_email)){
@@ -57,13 +58,20 @@ async function signupNewUser(){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user_email })
         })
+
+        const data = await res.json()
+
         if (!res.ok){
-            throw new Error('Signup failed')
+            throw new Error(data.message || 'Signup failed')
         }
 
         // if success
-        subMsg.style.display = 'inline'
-        emailInput.value = ''
+        if (data.message === "You're already subscribed") {
+            errSubMsg.style.display = 'inline'
+        } else {
+            subMsg.style.display = 'inline'
+            emailInput.value = ''
+        }
 
     } catch(err){
         console.log('Signup error: ', err)

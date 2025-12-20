@@ -41,7 +41,7 @@ app.post('/signup', async (req, res) => {
         // Check if email already exists
         const userDoc = await db.collection('users').doc(newEmail).get()
         if (userDoc.exists){
-            return res.status(200).json({message: "You're already subscribed"})
+            return res.status(400).json({message: "You're already subscribed"})
         }
 
         await db.collection('users').doc(newEmail).set({ 
