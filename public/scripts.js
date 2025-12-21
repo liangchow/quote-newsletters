@@ -62,16 +62,16 @@ async function signupNewUser(){
         const data = await res.json()
 
         if (!res.ok){
+            if (data.message === "You're already subscribed") {
+                errSubMsg.style.display = 'inline'
+                return
+            }
             throw new Error(data.message || 'Signup failed')
         }
 
-        // Conditional
-        if (data.message === "You're already subscribed") {
-            errSubMsg.style.display = 'inline'
-        } else {
-            subMsg.style.display = 'inline'
-            emailInput.value = ''
-        }
+        // if success
+        subMsg.style.display = 'inline'
+        emailInput.value = ''
 
     } catch(err){
         console.log('Signup error: ', err)
