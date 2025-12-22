@@ -2,6 +2,8 @@ const express = require('express')
 const nodemailer = require('nodemailer')
 const path = require('path')
 const hbs = require('nodemailer-express-handlebars').default
+const Queue = require('bull')
+const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
@@ -42,6 +44,96 @@ const handlebarsOptions = {
     extName: '.html',
 }
 transporter.use('compile', hbs(handlebarsOptions))
+
+const emailQueue = new Queue('email queue', {
+    redis: {
+        host: '127.0.0.1',
+        port: 6379,
+    }
+})
+    try {
+        // Fetch all active subscribers
+        const usersSnapshot = await db.collection('users')
+            .where('active', '==', true)
+            .get()
+        
+        const recipients = []
+        usersSnapshot.forEach(doc => {
+            recipients.push(doc.data().email)
+        })
+
+        if (recipients.length > 0) {
+            const data = {
+                template: 'digest',
+                recipients: recipients,
+                subject: 'Your Weekly Quote Digest',
+                context: {
+                    weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+                }
+            }
+            await emailQueue.add(data)
+            console.log(`Digest email queued for ${recipients.length} recipients`)
+        } else {
+            console.log('No active subscribers found')
+        }
+    } catch (err) {
+        console.error('Error scheduling digest email:', err)
+    }
+})
+
+emailQueue.process(1, async (job) =&gt; {
+    const {template, recipients, subject, context} = job.data;
+    
+    try {
+        // Fetch approved quotes for the digest
+        const quotesSnapshot = await db.collection('quotes')
+            .where('approved', '==', true)
+            .limit(10)
+            .get()
+        
+        const quotes = []
+        quotesSnapshot.forEach(doc => {
+            quotes.push({
+                id: doc.id,
+                ...doc.data()
+            })
+        })
+
+        // Prepare email options
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: recipients.join(', '),
+            subject: subject || 'Weekly Digest',
+            template: template,
+            context: {
+                quotes: quotes,
+                year: new Date().getFullYear(),
+                ...context
+            }
+        }
+
+        // Send email
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Email sent successfully:', info.messageId)
+        return info
+    } catch (err) {
+        console.error('Error sending email:', err)
+        throw err
+    }
+})
+
+// Email queue event handlers
+emailQueue.on('completed', (job, result) => {
+    console.log(`Job ${job.id} completed successfully`)
+})
+
+emailQueue.on('failed', (job, err) => {
+    console.error(`Job ${job.id} failed:`, err.message)
+})
+
+emailQueue.on('error', (err) => {
+    console.error('Queue error:', err)
+})
 
 // Routes
 app.post('/signup', async (req, res) => {
