@@ -1,7 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Quote Digest</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            color: #7f8c8d;
+            margin: 10px 0 0 0;
+            font-size: 14px;
+        }
+        .quote-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        .quote-text {
+            font-size: 16px;
+            font-style: italic;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        .quote-author {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: right;
+            font-weight: bold;
+        }
+        .quote-area {
+            font-size: 12px;
+            color: #95a5a6;
+            text-align: right;
+            margin-top: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .no-quotes {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px 0;
+        }
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Weekly Quote Digest</h1>
+        </div>
+    </div>
     <p>Hi, here's your weekly quote:</p>
+    <div class="footer">
+            <p>You're receiving this because you subscribed to our weekly digest.</p>
+            <p>
+                <a href="#">Unsubscribe</a> | 
+                <a href="#">Manage Preferences</a>
+            </p>
+            <p>&copy; {{year}} Quote Digest. All rights reserved.</p>
+        </div>
+    </div>
 </body>
+</html>
