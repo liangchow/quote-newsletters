@@ -98,7 +98,27 @@
             <h1>📚 Weekly Quote Digest</h1>
         </div>
     </div>
-    <p>Hi, here's your weekly quote:</p>
+    
+    {{#if quotes}}
+            {{#each quotes}}
+            <div class="quote-card">
+                <div class="quote-text">
+                    "{{this.text}}"
+                </div>
+                <div class="quote-author">
+                    — {{this.author}}
+                </div>
+                <div class="quote-area">
+                    {{this.area}}
+                </div>
+            </div>
+            {{/each}}
+        {{else}}
+            <div class="no-quotes">
+                <p>No quotes available this week. Check back soon!</p>
+            </div>
+        {{/if}}
+
     <div class="footer">
             <p>You're receiving this because you subscribed to our weekly digest.</p>
             <p>
