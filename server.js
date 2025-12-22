@@ -51,11 +51,12 @@ const emailQueue = new Queue('email queue', {
         port: 6379,
     }
 })
+// Schedule weekly digest (Every Monday at 9:00 AM)
+cron.schedule('0 9 * * 1', async () => {
     try {
+        console.log('Running weekly digest scheduler...')
         // Fetch all active subscribers
-        const usersSnapshot = await db.collection('users')
-            .where('active', '==', true)
-            .get()
+        const usersSnapshot = await db.collection('users').where('active', '==', true).get()
         
         const recipients = []
         usersSnapshot.forEach(doc => {
@@ -81,7 +82,7 @@ const emailQueue = new Queue('email queue', {
     }
 })
 
-emailQueue.process(1, async (job) =&gt; {
+emailQueue.process(1, async (job) => {
     const {template, recipients, subject, context} = job.data;
     
     try {
@@ -243,20 +244,97 @@ app.get('/get_random_quote', async (req, res) => {
             return res.status(500).json({message: 'Index not in db.'})
         }
 
-        const querySnapshot = await db.collection('quotes').where('approved', '==', true).where('index', '==', targetIndex).limit(1).get()
+        const querySnapshot = await db.collection('quotes')
+            .where('approved', '==', true)
+            .where('index', '==', targetIndex)
+            .limit(1)
+            .get()
 
-        if (!querySnapshot.empty){
+        if (!querySnapshot.empty) {
             const quoteDoc = querySnapshot.docs[0]
             const quoteData = {id: quoteDoc.id, ...quoteDoc.data()}
             console.log(quoteData)
             return res.status(200).json(quoteData)
         } else {
-            return res.status(404).json({message: "No quote found for approved and random index."})
+            return res.status(404).json({message: "No approved quotes found."})
         }
 
     } catch(err){
         console.log('Error: ', err)
         res.status(500).json({ message: 'Failed to retrieve quote' })        
+    }
+})
+
+app.post('/unsubscribe', async (req, res) => {
+    try {
+        const rawEmail = req.body?.email || ''
+        const email = trimInput(rawEmail).toLowerCase()
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email required' })
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' })
+        }
+
+        const userDoc = await db.collection('users').doc(email).get()
+        if (!userDoc.exists) {
+            return res.status(404).json({ message: 'Email not found' })
+        }
+
+        await db.collection('users').doc(email).update({
+            active: false,
+            unsubscribedAt: FieldValue.serverTimestamp()
+        })
+
+        res.status(200).json({
+            message: 'Successfully unsubscribed',
+            email: email
+        })
+
+    } catch (err) {
+        console.log('Error: ', err)
+        res.status(500).json({ message: 'Failed to unsubscribe' })
+    }
+})
+
+app.post('/send-digest', async (req, res) => {
+    try {
+        // Manual trigger for digest email (for testing)
+        const usersSnapshot = await db.collection('users')
+            .where('active', '==', true)
+            .get()
+        
+        const recipients = []
+        usersSnapshot.forEach(doc => {
+            recipients.push(doc.data().email)
+        })
+
+        if (recipients.length === 0) {
+            return res.status(400).json({ message: 'No active subscribers found' })
+        }
+
+        const data = {
+            template: 'digest',
+            recipients: recipients,
+            subject: 'Your Weekly Quote Digest',
+            context: {
+                weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+            }
+        }
+        
+        await emailQueue.add(data)
+        
+        res.status(200).json({
+            message: 'Digest email queued successfully',
+            recipientCount: recipients.length
+        })
+
+    } catch (err) {
+        console.log('Error: ', err)
+        res.status(500).json({ message: 'Failed to queue digest email' })
     }
 })
 
