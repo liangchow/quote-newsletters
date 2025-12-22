@@ -1,4 +1,7 @@
 const express = require('express')
+const nodemailer = require('nodemailer')
+const path = require('path')
+const hbs = require('nodemailer-express-handlebars').default
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
@@ -20,6 +23,25 @@ function getRandomInteger(min, max){
     max = Math.floor(max)
     return Math.floor(Math.random() * (max-min+1)) + min
 }
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS 
+    }
+})
+
+const handlebarsOptions = {
+    viewEngine: {
+        extName: '.html',
+        partialsDir: path.resolve('./emails'),
+        defaultLayout: false,
+    },
+    viewPath: path.resolve('./emails'),
+    extName: '.html',
+}
+transporter.use('compile', hbs(handlebarsOptions))
 
 // Routes
 app.post('/signup', async (req, res) => {

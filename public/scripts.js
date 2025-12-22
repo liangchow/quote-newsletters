@@ -16,14 +16,17 @@ const quoteErrMsg = document.querySelector('.quoteErrMsg')
 const quoteSubMsg = document.querySelector('.quoteSubMsg')
 const quoteForm = document.querySelector('.quoteSubmission')
 
-// Initially, hide all messages
-// errMsg.style.display = "none"
-// subMsg.style.display = "none"
-// quoteErrMsg.style.display = "none"
-// quoteSubMsg.style.display = "none"
-
 // Email verification criteria, e.g., j.doe@example.com
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS 
+    }
+})
+
 
 // Utility functions
 function trimInput(input){
