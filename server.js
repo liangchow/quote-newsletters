@@ -26,8 +26,9 @@ function getRandomInteger(min, max){
     return Math.floor(Math.random() * (max-min+1)) + min
 }
 
+// Newsletter Functions
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'outlook',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS 
@@ -51,7 +52,8 @@ const emailQueue = new Queue('email queue', {
         port: 6379,
     }
 })
-// Schedule weekly digest (Every Monday at 9:00 AM)
+
+// Schedule weekly digest (every Monday at 9:00 AM)
 cron.schedule('0 9 * * 1', async () => {
     try {
         console.log('Running weekly digest scheduler...')
@@ -89,7 +91,7 @@ emailQueue.process(1, async (job) => {
         // Fetch approved quotes for the digest
         const quotesSnapshot = await db.collection('quotes')
             .where('approved', '==', true)
-            .limit(10)
+            .limit(3)
             .get()
         
         const quotes = []
