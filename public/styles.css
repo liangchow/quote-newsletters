@@ -103,7 +103,7 @@ span {
 }
 
 .info i:hover {
-    opacity: 0.7;
+    opacity: 0.9;
 }
 
 .errMsg,
@@ -168,7 +168,7 @@ section {
     gap: 4px;
 }
 
-
+.bmaccontainer,
 .footerContainer {
     display: flex;
     flex-direction: column;
@@ -177,8 +177,10 @@ section {
     font-size: 1.3rem;
 }
 
+.bmaccontainer a:hover,
 .footerContainer a:hover {
     color: lime;
+    opacity: 0.9;
 }
 
 @media (min-width: 700px){
