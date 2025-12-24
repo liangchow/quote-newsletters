@@ -7,7 +7,8 @@ const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
-const PORT = process.env.PORT || 1339
+const {PORT, REDIS_PORT} = process.env
+
 require('dotenv').config()
 
 // Middleware
@@ -49,7 +50,7 @@ transporter.use('compile', hbs(handlebarsOptions))
 const emailQueue = new Queue('email queue', {
     redis: {
         host: '127.0.0.1',
-        port: 6379,
+        port: REDIS_PORT,
     }
 })
 
