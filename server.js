@@ -7,7 +7,7 @@ const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
-const {PORT, REDIS_PORT} = process.env
+const {PORT, EMAIL_USER, EMAIL_PASS, REDIS_HOST, REDIS_PORT} = process.env
 
 require('dotenv').config()
 
@@ -26,118 +26,6 @@ function getRandomInteger(min, max){
     max = Math.floor(max)
     return Math.floor(Math.random() * (max-min+1)) + min
 }
-
-// Newsletter Functions
-const transporter = nodemailer.createTransport({
-    service: 'outlook',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS 
-    }
-})
-
-const handlebarsOptions = {
-    viewEngine: {
-        extName: '.html',
-        partialsDir: path.resolve('./emails'),
-        defaultLayout: false,
-    },
-    viewPath: path.resolve('./emails'),
-    extName: '.html',
-}
-transporter.use('compile', hbs(handlebarsOptions))
-
-const emailQueue = new Queue('email queue', {
-    redis: {
-        host: '127.0.0.1',
-        port: REDIS_PORT,
-    }
-})
-
-// Schedule weekly digest (every Monday at 9:00 AM)
-cron.schedule('0 9 * * 1', async () => {
-    try {
-        console.log('Running weekly digest scheduler...')
-        // Fetch all active subscribers
-        const usersSnapshot = await db.collection('users').where('active', '==', true).get()
-        
-        const recipients = []
-        usersSnapshot.forEach(doc => {
-            recipients.push(doc.data().email)
-        })
-
-        if (recipients.length > 0) {
-            const data = {
-                template: 'digest',
-                recipients: recipients,
-                subject: 'Your Weekly Quote Digest',
-                context: {
-                    weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
-                }
-            }
-            await emailQueue.add(data)
-            console.log(`Digest email queued for ${recipients.length} recipients`)
-        } else {
-            console.log('No active subscribers found')
-        }
-    } catch (err) {
-        console.error('Error scheduling digest email:', err)
-    }
-})
-
-emailQueue.process(1, async (job) => {
-    const {template, recipients, subject, context} = job.data;
-    
-    try {
-        // Fetch approved quotes for the digest
-        const quotesSnapshot = await db.collection('quotes')
-            .where('approved', '==', true)
-            .limit(3)
-            .get()
-        
-        const quotes = []
-        quotesSnapshot.forEach(doc => {
-            quotes.push({
-                id: doc.id,
-                ...doc.data()
-            })
-        })
-
-        // Prepare email options
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: recipients.join(', '),
-            subject: subject || 'Weekly Digest',
-            template: template,
-            context: {
-                quotes: quotes,
-                year: new Date().getFullYear(),
-                ...context
-            }
-        }
-
-        // Send email
-        const info = await transporter.sendMail(mailOptions)
-        console.log('Email sent successfully:', info.messageId)
-        return info
-    } catch (err) {
-        console.error('Error sending email:', err)
-        throw err
-    }
-})
-
-// Email queue event handlers
-emailQueue.on('completed', (job, result) => {
-    console.log(`Job ${job.id} completed successfully`)
-})
-
-emailQueue.on('failed', (job, err) => {
-    console.error(`Job ${job.id} failed:`, err.message)
-})
-
-emailQueue.on('error', (err) => {
-    console.error('Queue error:', err)
-})
 
 // Routes
 app.post('/signup', async (req, res) => {
@@ -340,5 +228,119 @@ app.post('/send-digest', async (req, res) => {
         res.status(500).json({ message: 'Failed to queue digest email' })
     }
 })
+
+
+// Newsletter Functions
+const transporter = nodemailer.createTransport({
+    service: 'outlook',
+    auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS 
+    }
+})
+
+const handlebarsOptions = {
+    viewEngine: {
+        extName: '.html',
+        partialsDir: path.resolve('./emails'),
+        defaultLayout: false,
+    },
+    viewPath: path.resolve('./emails'),
+    extName: '.html',
+}
+transporter.use('compile', hbs(handlebarsOptions))
+
+const emailQueue = new Queue('email queue', {
+    redis: {
+        host: REDIS_HOST,
+        port: REDIS_PORT,
+    }
+})
+
+// Schedule weekly digest (every Monday at 9:00 AM)
+cron.schedule('0 9 * * 1', async () => {
+    try {
+        console.log('Running weekly digest scheduler...')
+        // Fetch all active subscribers
+        const usersSnapshot = await db.collection('users').where('active', '==', true).get()
+        
+        const recipients = []
+        usersSnapshot.forEach(doc => {
+            recipients.push(doc.data().email)
+        })
+
+        if (recipients.length > 0) {
+            const data = {
+                template: 'digest',
+                recipients: recipients,
+                subject: 'Your Weekly Quote Digest',
+                context: {
+                    weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+                }
+            }
+            await emailQueue.add(data)
+            console.log(`Digest email queued for ${recipients.length} recipients`)
+        } else {
+            console.log('No active subscribers found')
+        }
+    } catch (err) {
+        console.error('Error scheduling digest email:', err)
+    }
+})
+
+emailQueue.process(1, async (job) => {
+    const {template, recipients, subject, context} = job.data;
+    
+    try {
+        // Fetch approved quotes for the digest
+        const quotesSnapshot = await db.collection('quotes')
+            .where('approved', '==', true)
+            .limit(3)
+            .get()
+        
+        const quotes = []
+        quotesSnapshot.forEach(doc => {
+            quotes.push({
+                id: doc.id,
+                ...doc.data()
+            })
+        })
+
+        // Prepare email options
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: recipients.join(', '),
+            subject: subject || 'Weekly Digest',
+            template: template,
+            context: {
+                quotes: quotes,
+                year: new Date().getFullYear(),
+                ...context
+            }
+        }
+
+        // Send email
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Email sent successfully:', info.messageId)
+        return info
+    } catch (err) {
+        console.error('Error sending email:', err)
+        throw err
+    }
+})
+
+// Email queue event handlers
+emailQueue.on('completed', (job, result) => {
+    console.log(`Job ${job.id} completed successfully`)
+})
+
+emailQueue.on('failed', (job, err) => {
+    console.error(`Job ${job.id} failed:`, err.message)
+})
+
+emailQueue.on('error', (err) => {
+    console.error('Queue error:', err)
+})
+
 
 app.listen(PORT, () => console.log(`Server has started on port: ${PORT}`))
