@@ -1,4 +1,5 @@
 const express = require('express')
+require('dotenv').config()
 const nodemailer = require('nodemailer')
 const path = require('path')
 const hbs = require('nodemailer-express-handlebars').default
@@ -6,10 +7,12 @@ const Queue = require('bull')
 const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
-const app = express()
-const {PORT, EMAIL_USER, EMAIL_PASS, REDIS_HOST, REDIS_PORT} = process.env
 
-require('dotenv').config()
+const app = express()
+// const client = createClient() // unused for now
+const PORT = process.env.PORT || 1339
+const { EMAIL_USER, EMAIL_PASS } = process.env
+const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true'
 
 // Middleware
 app.use(express.json({limit: '10kb'})) // Limit payload size for security
@@ -250,12 +253,69 @@ const handlebarsOptions = {
 }
 transporter.use('compile', hbs(handlebarsOptions))
 
-const emailQueue = new Queue('email queue', {
-    redis: {
-        host: REDIS_HOST,
-        port: REDIS_PORT,
+let emailQueue
+if (REDIS_ENABLED) {
+    const { REDIS_HOST, REDIS_PORT, REDIS_API_SECRET_KEY, REDIS_API_ACCOUNT_KEY } = process.env
+
+    const redisOptions = {
+        host: REDIS_HOST || '127.0.0.1',
+        port: parseInt(REDIS_PORT) || 6379,
     }
-})
+
+    // If using a cloud Redis provider requiring password/auth
+    if (REDIS_API_SECRET_KEY) {
+        redisOptions.password = REDIS_API_SECRET_KEY
+    }
+    // Some providers might use username/password
+    if (REDIS_API_ACCOUNT_KEY && REDIS_API_ACCOUNT_KEY !== 'default') {
+        redisOptions.username = REDIS_API_ACCOUNT_KEY
+        console.log('🔒 Using Redis Authentication with user:', REDIS_API_ACCOUNT_KEY)
+    } else if (REDIS_API_SECRET_KEY) {
+        console.log('🔒 Using Redis Authentication with password only')
+    }
+
+    console.log(`🔌 Connecting to Redis at ${redisOptions.host}:${redisOptions.port}...`)
+
+    emailQueue = new Queue('email queue', {
+        redis: redisOptions
+    })
+    
+    // Email queue event handlers
+    emailQueue.on('completed', (job, result) => {
+        console.log(`Job ${job.id} completed successfully`)
+    })
+
+    emailQueue.on('failed', (job, err) => {
+        console.error(`Job ${job.id} failed:`, err.message)
+    })
+
+    emailQueue.on('error', (err) => {
+        if (err.code === 'ECONNREFUSED') {
+            console.error(`❌ Redis Connection Failed: Ensure Redis is running at ${REDIS_HOST}:${REDIS_PORT}`)
+        } else {
+            console.error('Queue error:', err.message)
+        }
+    })
+} else {
+    // Mock Queue for development without Redis
+    console.log('⚠️  Redis disabled. Using mock email queue.')
+    emailQueue = {
+        add: async (data) => {
+            console.log('[Mock Queue] Job added:', data.subject || 'No subject')
+            // Simulate processing
+            setTimeout(() => {
+                console.log('[Mock Queue] Job processed (simulated)')
+            }, 1000)
+            return Promise.resolve({ id: 'mock-job-' + Date.now() })
+        },
+        process: (concurrency, handler) => {
+            console.log(`[Mock Queue] Worker registered with concurrency ${concurrency}`)
+            // In a real mock, we might immediately trigger the handler for testing,
+            // but for now, just logging is enough to prevent crashes.
+        },
+        on: () => {}
+    }
+}
 
 // Schedule weekly digest (every Monday at 9:00 AM)
 cron.schedule('0 9 * * 1', async () => {
@@ -328,19 +388,5 @@ emailQueue.process(1, async (job) => {
         throw err
     }
 })
-
-// Email queue event handlers
-emailQueue.on('completed', (job, result) => {
-    console.log(`Job ${job.id} completed successfully`)
-})
-
-emailQueue.on('failed', (job, err) => {
-    console.error(`Job ${job.id} failed:`, err.message)
-})
-
-emailQueue.on('error', (err) => {
-    console.error('Queue error:', err)
-})
-
 
 app.listen(PORT, () => console.log(`Server has started on port: ${PORT}`))
