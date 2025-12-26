@@ -138,17 +138,41 @@ app.get('/get_random_quote', async (req, res) => {
             return res.status(500).json({message: 'Index not in db.'})
         }
 
-        const querySnapshot = await db.collection('quotes')
-            .where('approved', '==', true)
-            .where('index', '==', targetIndex)
-            .limit(1)
+        // Try to find an approved quote with index >= targetIndex
+        // We fetch a batch of quotes starting from targetIndex and filter for 'approved' in memory
+        // to avoid needing a composite index on (approved, index).
+        let querySnapshot = await db.collection('quotes')
+            .orderBy('index')
+            .startAt(targetIndex)
+            .limit(20)
             .get()
 
-        if (!querySnapshot.empty) {
-            const quoteDoc = querySnapshot.docs[0]
-            const quoteData = {id: quoteDoc.id, ...quoteDoc.data()}
-            console.log(quoteData)
-            return res.status(200).json(quoteData)
+        let validQuote = null;
+
+        const findValidQuote = (snapshot) => {
+            for (const doc of snapshot.docs) {
+                const data = doc.data();
+                if (data.approved === true) {
+                    return { id: doc.id, ...data };
+                }
+            }
+            return null;
+        }
+
+        validQuote = findValidQuote(querySnapshot);
+
+        // If none found (e.g. we hit a gap at the end), wrap around to the beginning
+        if (!validQuote) {
+             querySnapshot = await db.collection('quotes')
+                .orderBy('index')
+                .limit(20)
+                .get()
+             validQuote = findValidQuote(querySnapshot);
+        }
+
+        if (validQuote) {
+            console.log(validQuote)
+            return res.status(200).json(validQuote)
         } else {
             return res.status(404).json({message: "No approved quotes found."})
         }
