@@ -259,13 +259,10 @@ app.post('/send-digest', async (req, res) => {
 
 // Newsletter Functions
 const transporter = nodemailer.createTransport({
-    service: 'smtp.gmail.com',
-    port: 456,
-    secure: true,
+    service: 'smtp.office365.com',
+    port: 587,
+    secure: false,
     auth: {
-        type: "OAuth2",
-        clientID: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
         user: EMAIL_USER,
         pass: EMAIL_PASS 
     }
