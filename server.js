@@ -9,9 +9,8 @@ const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
 
 const app = express()
-// const client = createClient() // unused for now
 const PORT = process.env.PORT || 1339
-const { EMAIL_USER, EMAIL_PASS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
+const { EMAIL_USER, EMAIL_PASS } = process.env
 const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true'
 
 // Middleware
