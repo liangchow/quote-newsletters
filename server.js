@@ -11,7 +11,7 @@ const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
 // const client = createClient() // unused for now
 const PORT = process.env.PORT || 1339
-const { EMAIL_USER, EMAIL_PASS } = process.env
+const { EMAIL_USER, EMAIL_PASS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
 const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true'
 
 // Middleware
@@ -259,8 +259,13 @@ app.post('/send-digest', async (req, res) => {
 
 // Newsletter Functions
 const transporter = nodemailer.createTransport({
-    service: 'outlook',
+    service: 'smtp.gmail.com',
+    port: 456,
+    secure: true,
     auth: {
+        type: "OAuth2",
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
         user: EMAIL_USER,
         pass: EMAIL_PASS 
     }
