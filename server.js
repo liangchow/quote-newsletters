@@ -258,7 +258,7 @@ app.post('/send-digest', async (req, res) => {
 
 // Newsletter Functions
 const transporter = nodemailer.createTransport({
-    service: 'smtp.office365.com',
+    host: 'mail.hatbyte.com',
     port: 587,
     secure: false,
     auth: {
@@ -391,7 +391,7 @@ emailQueue.process(1, async (job) => {
             })
         })
 
-        // Prepare email options
+        // Prepare email options. // for loop
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: recipients.join(', '),
