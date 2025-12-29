@@ -278,69 +278,40 @@ const handlebarsOptions = {
 }
 transporter.use('compile', hbs(handlebarsOptions))
 
-let emailQueue
-if (REDIS_ENABLED) {
-    const { REDIS_HOST, REDIS_PORT, REDIS_API_SECRET_KEY, REDIS_API_ACCOUNT_KEY } = process.env
-
-    const redisOptions = {
-        host: REDIS_HOST || '127.0.0.1',
-        port: parseInt(REDIS_PORT) || 6379,
+class InMemoryQueue {
+    constructor(name) {
+        this.name = name
+        this.handler = null
+        this.listeners = { completed: [], failed: [], error: [] }
     }
-
-    // If using a cloud Redis provider requiring password/auth
-    if (REDIS_API_SECRET_KEY) {
-        redisOptions.password = REDIS_API_SECRET_KEY
+    process(concurrency, handler) {
+        this.handler = handler
     }
-    // Some providers might use username/password
-    if (REDIS_API_ACCOUNT_KEY && REDIS_API_ACCOUNT_KEY !== 'default') {
-        redisOptions.username = REDIS_API_ACCOUNT_KEY
-        console.log('🔒 Using Redis Authentication with user:', REDIS_API_ACCOUNT_KEY)
-    } else if (REDIS_API_SECRET_KEY) {
-        console.log('🔒 Using Redis Authentication with password only')
+    on(event, cb) {
+        if (this.listeners[event]) this.listeners[event].push(cb)
     }
-
-    console.log(`🔌 Connecting to Redis at ${redisOptions.host}:${redisOptions.port}...`)
-
-    emailQueue = new Queue('email queue', {
-        redis: redisOptions
-    })
-    
-    // Email queue event handlers
-    emailQueue.on('completed', (job, result) => {
-        console.log(`Job ${job.id} completed successfully`)
-    })
-
-    emailQueue.on('failed', (job, err) => {
-        console.error(`Job ${job.id} failed:`, err.message)
-    })
-
-    emailQueue.on('error', (err) => {
-        if (err.code === 'ECONNREFUSED') {
-            console.error(`❌ Redis Connection Failed: Ensure Redis is running at ${REDIS_HOST}:${REDIS_PORT}`)
-        } else {
-            console.error('Queue error:', err.message)
-        }
-    })
-} else {
-    // Mock Queue for development without Redis
-    console.log('⚠️  Redis disabled. Using mock email queue.')
-    emailQueue = {
-        add: async (data) => {
-            console.log('[Mock Queue] Job added:', data.subject || 'No subject')
-            // Simulate processing
-            setTimeout(() => {
-                console.log('[Mock Queue] Job processed (simulated)')
-            }, 1000)
-            return Promise.resolve({ id: 'mock-job-' + Date.now() })
-        },
-        process: (concurrency, handler) => {
-            console.log(`[Mock Queue] Worker registered with concurrency ${concurrency}`)
-            // In a real mock, we might immediately trigger the handler for testing,
-            // but for now, just logging is enough to prevent crashes.
-        },
-        on: () => {}
+    async add(data) {
+        const job = { id: String(Date.now()), data }
+        setImmediate(async () => {
+            if (!this.handler) return
+            try {
+                const result = await this.handler({ id: job.id, data: job.data })
+                this.listeners.completed.forEach(fn => fn({ id: job.id }, result))
+            } catch (err) {
+                this.listeners.failed.forEach(fn => fn({ id: job.id }, err))
+            }
+        })
+        return { id: job.id }
     }
 }
+
+const emailQueue = new InMemoryQueue('email queue')
+emailQueue.on('completed', (job, result) => {
+    console.log(`Job ${job.id} completed successfully`)
+})
+emailQueue.on('failed', (job, err) => {
+    console.error(`Job ${job.id} failed:`, err.message)
+})
 
 // Schedule weekly digest (every Monday at 9:00 AM)
 cron.schedule('0 9 * * 1', async () => {
