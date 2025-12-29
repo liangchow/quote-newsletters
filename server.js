@@ -3,7 +3,6 @@ require('dotenv').config()
 const nodemailer = require('nodemailer')
 const path = require('path')
 const hbs = require('nodemailer-express-handlebars').default
-const Queue = require('bull')
 const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
@@ -362,23 +361,31 @@ emailQueue.process(1, async (job) => {
             })
         })
 
-        // Prepare email options. // for loop
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: recipients.join(', '),
-            subject: subject || 'Weekly Digest',
-            template: template,
-            context: {
-                quotes: quotes,
-                year: new Date().getFullYear(),
-                ...context
+        // Send email to each recipient individually
+        const results = []
+        for (const recipient of recipients) {
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: recipient,
+                subject: subject || 'Weekly Digest',
+                template: template,
+                context: {
+                    quotes: quotes,
+                    year: new Date().getFullYear(),
+                    ...context
+                }
+            }
+
+            try {
+                const info = await transporter.sendMail(mailOptions)
+                console.log(`Email sent successfully to ${recipient}:`, info.messageId)
+                results.push({ recipient, status: 'sent', messageId: info.messageId })
+            } catch (error) {
+                console.error(`Failed to send email to ${recipient}:`, error.message)
+                results.push({ recipient, status: 'failed', error: error.message })
             }
         }
-
-        // Send email
-        const info = await transporter.sendMail(mailOptions)
-        console.log('Email sent successfully:', info.messageId)
-        return info
+        return results
     } catch (err) {
         console.error('Error sending email:', err)
         throw err
