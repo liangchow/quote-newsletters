@@ -216,7 +216,7 @@ app.post('/unsubscribe', async (req, res) => {
     }
 })
 
-app.post('/send-digest', async (req, res) => {
+app.post('/send_digest', async (req, res) => {
     try {
         // Manual trigger for digest email (for testing)
         const usersSnapshot = await db.collection('users')
@@ -232,20 +232,24 @@ app.post('/send-digest', async (req, res) => {
             return res.status(400).json({ message: 'No active subscribers found' })
         }
 
-        const data = {
-            template: 'digest',
-            recipients: recipients,
-            subject: 'Your Weekly Quote Digest',
-            context: {
-                weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+        // Add each recipient as an individual job to the queue
+        let queuedCount = 0;
+        for (const recipient of recipients) {
+            const data = {
+                template: 'digest',
+                recipients: [recipient], // Pass as array for compatibility with worker
+                subject: 'Your Weekly Quote Digest',
+                context: {
+                    weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+                }
             }
+            await emailQueue.add(data)
+            queuedCount++;
         }
         
-        await emailQueue.add(data)
-        
         res.status(200).json({
-            message: 'Digest email queued successfully',
-            recipientCount: recipients.length
+            message: 'Digest emails queued successfully',
+            recipientCount: queuedCount
         })
 
     } catch (err) {
@@ -325,16 +329,19 @@ cron.schedule('0 9 * * 1', async () => {
         })
 
         if (recipients.length > 0) {
-            const data = {
-                template: 'digest',
-                recipients: recipients,
-                subject: 'Your Weekly Quote Digest',
-                context: {
-                    weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+            console.log(`Queueing digest emails for ${recipients.length} recipients...`)
+            for (const recipient of recipients) {
+                const data = {
+                    template: 'digest',
+                    recipients: [recipient], // Pass as array for compatibility
+                    subject: 'Weekly QuoteByte',
+                    context: {
+                        weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
+                    }
                 }
+                await emailQueue.add(data)
             }
-            await emailQueue.add(data)
-            console.log(`Digest email queued for ${recipients.length} recipients`)
+            console.log(`Digest emails queued for ${recipients.length} recipients`)
         } else {
             console.log('No active subscribers found')
         }
@@ -347,45 +354,37 @@ emailQueue.process(1, async (job) => {
     const {template, recipients, subject, context} = job.data;
     
     try {
-        // Fetch approved quotes for the digest
-        const quotesSnapshot = await db.collection('quotes')
-            .where('approved', '==', true)
-            .limit(3)
-            .get()
-        
-        const quotes = []
-        quotesSnapshot.forEach(doc => {
-            quotes.push({
-                id: doc.id,
-                ...doc.data()
-            })
-        })
+        // Fetch a single random approved quote via our API
+        // Note: fetch needs a full URL in Node.js environment
+        const url = `http://127.0.0.1:${PORT}/get_random_quote`;
+        console.log(`Fetching quote from: ${url}`);
+        const res = await fetch(url)
+        if (!res.ok) {
+            throw new Error(`Failed to fetch random quote: ${res.status} ${res.statusText}`)
+        }
+        const quote = await res.json()
 
-        // Send email to each recipient individually
-        const results = []
-        for (const recipient of recipients) {
+        // Send email
+        try {
             const mailOptions = {
                 from: process.env.EMAIL_USER,
-                to: recipient,
-                subject: subject || 'Weekly Digest',
+                to: recipients[0], // We now only have one recipient per job
+                subject: subject || 'Weekly QuoteByte',
                 template: template,
                 context: {
-                    quotes: quotes,
+                    quotes: quote,
                     year: new Date().getFullYear(),
                     ...context
                 }
             }
 
-            try {
-                const info = await transporter.sendMail(mailOptions)
-                console.log(`Email sent successfully to ${recipient}:`, info.messageId)
-                results.push({ recipient, status: 'sent', messageId: info.messageId })
-            } catch (error) {
-                console.error(`Failed to send email to ${recipient}:`, error.message)
-                results.push({ recipient, status: 'failed', error: error.message })
-            }
+            const info = await transporter.sendMail(mailOptions)
+            console.log(`Email sent successfully to ${recipients[0]}:`, info.messageId)
+            return info
+        } catch (error) {
+            console.error(`Failed to send email to ${recipients[0]}:`, error.message)
+            throw error
         }
-        return results
     } catch (err) {
         console.error('Error sending email:', err)
         throw err
