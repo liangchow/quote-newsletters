@@ -19,16 +19,13 @@
   },
   "homepage": "https://github.com/liangchow/quote-api#readme",
   "dependencies": {
-    "bull": "^4.16.5",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "firebase-admin": "^13.6.0",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.11",
-    "nodemailer-express-handlebars": "^7.0.0",
-    "redis": "^5.10.0",
-    "stripe": "^20.0.0"
+    "nodemailer-express-handlebars": "^7.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
