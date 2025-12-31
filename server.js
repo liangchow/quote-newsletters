@@ -9,6 +9,7 @@ const { FieldValue } = require('firebase-admin/firestore')
 
 const app = express()
 const PORT = process.env.PORT || 1339
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
 const { EMAIL_USER, EMAIL_PASS } = process.env
 const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true'
 
@@ -178,6 +179,38 @@ app.get('/get_random_quote', async (req, res) => {
     } catch(err){
         console.log('Error: ', err)
         res.status(500).json({ message: 'Failed to retrieve quote' })        
+    }
+})
+
+app.get('/unsubscribe', async (req, res) => {
+    try {
+        const rawEmail = req.query?.email || ''
+        const email = trimInput(rawEmail).toLowerCase()
+
+        if (!email) {
+            return res.status(400).send('Email required')
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            return res.status(400).send('Invalid email format')
+        }
+
+        const userDoc = await db.collection('users').doc(email).get()
+        if (!userDoc.exists) {
+            return res.status(404).send('Email not found')
+        }
+
+        await db.collection('users').doc(email).update({
+            active: false,
+            unsubscribedAt: FieldValue.serverTimestamp()
+        })
+
+        res.send('<h1>Successfully unsubscribed</h1><p>You have been removed from our mailing list.</p>')
+
+    } catch (err) {
+        console.log('Error: ', err)
+        res.status(500).send('Failed to unsubscribe')
     }
 })
 
@@ -374,6 +407,7 @@ emailQueue.process(1, async (job) => {
                 context: {
                     quotes: quote,
                     year: new Date().getFullYear(),
+                    unsubscribeLink: `${BASE_URL}/unsubscribe?email=${encodeURIComponent(recipients[0])}`,
                     ...context
                 }
             }
