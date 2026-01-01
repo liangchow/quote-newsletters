@@ -14,6 +14,13 @@ body {
     gap: 24px;
 }
 
+.gradient {
+    background: linear-gradient(130deg, #7b48e8 0%, #00d2ff 20%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 .container {
     flex: 1;
     display: flex;
@@ -37,7 +44,6 @@ body {
     font-weight: 700;
     font-style: normal;
     font-size: 36px;
-    color: #2c3e50;
     margin: 0;
 }
 
