@@ -14,11 +14,6 @@ body {
     gap: 24px;
 }
 
-span {
-    font-weight: 500;
-    color: lime;
-}
-
 .container {
     flex: 1;
     display: flex;
@@ -35,6 +30,15 @@ span {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.headerContainer h1 {
+    font-family: "Goldman", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 36px;
+    color: #2c3e50;
+    margin: 0;
 }
 
 .headerContainer p {
