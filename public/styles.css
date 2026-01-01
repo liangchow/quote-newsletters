@@ -8,10 +8,10 @@ body {
     font-family: 'Poppins', san-serif;
     min-height: 100vh;
     background: linear-gradient(to right, #000428, #000046);
-    color: white;
+    color: #7c859f;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .gradient {
@@ -82,6 +82,7 @@ body {
 }
 
 .subHeader {
+    color: #ffffff;
     font-size: 1.3rem;
 }
 
@@ -94,17 +95,15 @@ body {
 }
 
 .info h3,
-.info p {
-    font-size: 0.9rem;
+.info p,
+.preMsg {
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .info h3 {
     color: cyan;
     font-weight: 500;
-}
-
-.info p {
-    font-weight: 300;
 }
 
 .info i {
@@ -147,7 +146,7 @@ body {
 
 .keyInput input:focus-within,
 .quoteSubmission input:focus-within {
-    border-color: blue;
+    border-color: #7b48e8;
 }
 
 .keyInput input,
