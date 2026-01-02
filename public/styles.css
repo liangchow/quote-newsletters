@@ -11,6 +11,8 @@ body {
     color: #7c859f;
     display: flex;
     flex-direction: column;
+    justify-items: center;
+    align-items: center;
     gap: 20px;
 }
 
