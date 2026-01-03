@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
     <title>Weekly quotebyte</title>
     <style>
-        body {
+        /* body {
             font-family: 'Poppins', san-serif;
             line-height: 1.6;
             max-width: 600px;
@@ -18,12 +18,30 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+        } */
+        body {
+            font-family: 'Poppins', san-serif;
+            min-height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #7c859f;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
+
+        .gradient {
+            background: linear-gradient(130deg, #000428 0%, #7b48e8 20%, #00d2ff 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            /* padding: 24px; */
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
@@ -35,12 +53,10 @@
             font-weight: 700;
             font-style: normal;
             font-size: 36px;
-            color: #2c3e50;
             margin: 0;
         }
         .header p {
             color: #7f8c8d;
-            margin: 10px 0 0 0;
             font-size: 14px;
         }
         .subHeader {
@@ -109,7 +125,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>quotebyte</h1>
+            <h1 class="gradient">quotebyte</h1>
+            <p>Stay connected to the minds that changed the world</p>
         </div>
     </div>
 
