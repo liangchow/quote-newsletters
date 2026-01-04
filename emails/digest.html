@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
     <title>Weekly quotebyte</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         /* body {
             font-family: 'Poppins', san-serif;
             line-height: 1.6;
@@ -20,14 +25,19 @@
             gap: 24px;
         } */
         body {
-            font-family: 'Poppins', san-serif;
-            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+.email-container {
             max-width: 600px;
             margin: 0 auto;
-            color: #7c859f;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .gradient {
@@ -37,128 +47,206 @@
             background-clip: text;
         }
 
-        .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            /* padding: 24px; */
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            gap: 24px;
-            background-color: white;
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
         }
+
         .header h1 {
             font-family: "Goldman", sans-serif;
             font-weight: 700;
-            font-style: normal;
-            font-size: 36px;
-            margin: 0;
+            font-size: 42px;
+            margin-bottom: 10px;
+            color: white;
         }
+        
         .header p {
-            color: #7f8c8d;
-            font-size: 14px;
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 300;
         }
-        .subHeader {
-            font-size: 24px;
-            line-height: 42px;
-            letter-spacing: -.25px;
-            margin-bottom: 28px;
-            text-align: left;
-            word-break: break-word;
+
+        .content {
+            padding: 40px 30px;
         }
+
+        .sub-header {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
         .quote-card {
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-left: 5px solid #667eea;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
         }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 80px;
+            color: rgba(102, 126, 234, 0.2);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
         .quote-text {
             font-size: 20px;
             color: #2c3e50;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             line-height: 1.8;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
         }
+
         .quote-author {
+            font-size: 16px;
+            color: #667eea;
+            text-align: right;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .quote-area {
             font-size: 14px;
             color: #7f8c8d;
             text-align: right;
-            font-weight: bold;
+            font-style: italic;
         }
-        .quote-area {
-            font-size: 12px;
-            color: #95a5a6;
-            text-align: right;
-            margin-top: 5px;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #ecf0f1;
-            font-size: 12px;
-            color: #95a5a6;
-        }
-        .footer a {
-            color: #3498db;
-            text-decoration: none;
-        }
+
         .no-quotes {
             text-align: center;
+            padding: 60px 20px;
             color: #7f8c8d;
-            padding: 40px 0;
         }
+
+        .no-quotes p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
         @media only screen and (max-width: 600px) {
             body {
                 padding: 10px;
             }
-            .container {
-                padding: 20px;
+            
+            .header {
+                padding: 30px 20px;
             }
+            
             .header h1 {
-                font-size: 24px;
+                font-size: 32px;
+            }
+            
+            .header p {
+                font-size: 14px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .sub-header {
+                font-size: 20px;
+            }
+            
+            .quote-card {
+                padding: 25px 20px;
+            }
+            
+            .quote-text {
+                font-size: 18px;
+            }
+            
+            .footer {
+                padding: 25px 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="email-container">
         <div class="header">
-            <h1 class="gradient">quotebyte</h1>
+            <h1>quotebyte</h1>
             <p>Stay connected to the minds that changed the world</p>
         </div>
-    </div>
 
-    <section>
-        <h2 class="subHeader">Here is your weekly inspiration!</h2>
-    </section>
-    
-    {{#if quotes}}
-        <div class="quote-card">
-            <div class="quote-text">
-                "{{quotes.text}}"
+        <div class="content">
+            <h2 class="sub-header">📖 Here is your weekly inspiration!</h2>
+            
+            {{#if quotes}}
+            <div class="quote-card">
+                <div class="quote-text">
+                    {{quotes.text}}
+                </div>
+                <div class="quote-author">
+                    — {{quotes.author}}
+                </div>
+                <div class="quote-area">
+                    {{quotes.area}}
+                </div>
             </div>
-            <div class="quote-author">
-                —{{quotes.author}}
-            </div>
-            <div class="quote-area">
-                {{quotes.area}}
-            </div>
-        </div>
-    {{else}}
+            {{else}}
             <div class="no-quotes">
-                <p>No quotes available this week. Check back soon!</p>
+                <p>📭 No quotes available this week.</p>
+                <p>Check back soon!</p>
             </div>
-        {{/if}}
+            {{/if}}
+        </div>
 
-    <div class="footer">
+        <div class="footer">
             <p>You're receiving this because you subscribed to our weekly quote newsletter.</p>
             <p>
-                <a href="{{unsubscribeLink}}">Unsubscribe</a> | 
+                <a href="{{{unsubscribeLink}}}">Unsubscribe</a> | 
                 <a href="#">Manage Preferences</a>
             </p>
-            <p>&copy; {{year}} QuoteByte. All rights reserved.</p>
+            <p class="copyright">&copy; {{year}} quotebyte. All rights reserved.</p>
         </div>
     </div>
 </body>
