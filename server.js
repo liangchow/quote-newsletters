@@ -54,8 +54,7 @@ app.post('/signup', async (req, res) => {
         }
 
         // Email verification, e.g., j.doe@example.com
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(newEmail)){
+        if (!isValidEmail(newEmail)){
                 return res.status(400).json({ message: 'Invalid email format' })
             }
 
@@ -95,7 +94,7 @@ app.post('/submit', async (req, res) => {
         const newArea = trimInput(rawArea)
 
         if (!newText || !newAuthor || !newArea){
-            return res.status(400).json({ message: 'Input required' })
+            return res.status(400).json({ message: 'All fields required' })
         }
 
         // Indexing quote
@@ -201,29 +200,172 @@ app.get('/unsubscribe', async (req, res) => {
         const email = trimInput(rawEmail).toLowerCase()
 
         if (!email) {
-            return res.status(400).send('Email required')
+            return res.status(400).send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Error - QuoteByte</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                        h1 { color: #e74c3c; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Error</h1>
+                    <p>Email address is required</p>
+                </body>
+                </html>
+                `)
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
-            return res.status(400).send('Invalid email format')
+        if (!isValidEmail(email)) {
+            return res.status(400).send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Error - QuoteByte</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                        h1 { color: #e74c3c; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Error</h1>
+                    <p>Invalid email format</p>
+                </body>
+                </html>
+            `)
         }
 
         const userDoc = await db.collection('users').doc(email).get()
         if (!userDoc.exists) {
-            return res.status(404).send('Email not found')
+            return res.status(404).send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Not Found - QuoteByte</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                        h1 { color: #e74c3c; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Not Found</h1>
+                    <p>Email address not found in our system</p>
+                </body>
+                </html>
+            `)
         }
 
+        // Check if already unsubscribed
+        const userData = userDoc.data()
+        if (userData.active === false) {
+            return res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Already Unsubscribed - QuoteByte</title>
+                    <style>
+                        body { 
+                            font-family: 'Arial', sans-serif; 
+                            max-width: 600px; 
+                            margin: 50px auto; 
+                            padding: 20px; 
+                            text-align: center;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            min-height: 100vh;
+                        }
+                        .container {
+                            background: white;
+                            padding: 40px;
+                            border-radius: 10px;
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                        }
+                        h1 { color: #667eea; margin-bottom: 20px; }
+                        p { color: #666; line-height: 1.6; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>Already Unsubscribed</h1>
+                        <p>You have already been removed from our mailing list.</p>
+                        <p>If this was a mistake, you can always subscribe again!</p>
+                    </div>
+                </body>
+                </html>
+            `)
+        }
+
+        // Update user to inactive, active => false
         await db.collection('users').doc(email).update({
             active: false,
             unsubscribedAt: FieldValue.serverTimestamp()
         })
 
-        res.send('<h1>Successfully unsubscribed</h1><p>You have been removed from our mailing list.</p>')
+   console.log(`User unsubscribed: ${email}`)
+
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Successfully Unsubscribed - QuoteByte</title>
+                <style>
+                    body { 
+                        font-family: 'Arial', sans-serif; 
+                        max-width: 600px; 
+                        margin: 50px auto; 
+                        padding: 20px; 
+                        text-align: center;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        min-height: 100vh;
+                    }
+                    .container {
+                        background: white;
+                        padding: 40px;
+                        border-radius: 10px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                    }
+                    h1 { color: #27ae60; margin-bottom: 20px; }
+                    p { color: #666; line-height: 1.6; }
+                    .email { 
+                        background: #f8f9fa; 
+                        padding: 10px; 
+                        border-radius: 5px; 
+                        margin: 20px 0;
+                        font-family: monospace;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>✓ Successfully Unsubscribed</h1>
+                    <p>You have been removed from our weekly quote newsletter.</p>
+                    <div class="email">${email}</div>
+                    <p>We're sorry to see you go! If you change your mind, you can always subscribe again.</p>
+                    <p>Thank you for being part of QuoteByte!</p>
+                </div>
+            </body>
+            </html>
+        `)
 
     } catch (err) {
-        console.log('Error: ', err)
-        res.status(500).send('Failed to unsubscribe')
+        console.error('Unsubscribe error:', err)
+        res.status(500).send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Error - QuoteByte</title>
+                <style>
+                    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                    h1 { color: #e74c3c; }
+                </style>
+            </head>
+            <body>
+                <h1>Error</h1>
+                <p>Failed to unsubscribe. Please try again later.</p>
+            </body>
+            </html>
+        `)
     }
 })
 
