@@ -11,16 +11,29 @@ const app = express()
 const PORT = process.env.PORT || 1339
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
 const { EMAIL_USER, EMAIL_PASS } = process.env
-const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true'
 
 // Middleware
 app.use(express.json({limit: '10kb'})) // Limit payload size for security
+app.use(express.urlencoded({extended: true})) // Support form submissions
 app.use(express.static('public'))
+
+// Security headers
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('X-Frame-Options', 'DENY')
+    res.setHeader('X-XSS-Protection', '1; mode=block')
+    next()
+})
 
 // Utility functions
 function trimInput(input){
     if (typeof input !== 'string') return ''
     return input.trim().replace(/[<>]/g, '')
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
 }
 
 function getRandomInteger(min, max){
