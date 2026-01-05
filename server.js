@@ -135,8 +135,16 @@ app.post('/submit', async (req, res) => {
 
 app.get('/get_random_quote', async (req, res) => {
     try {
-        const snapshot = await db.collection('quotes').orderBy('index', 'desc').limit(1).get()
-        let targetIndex;
+        const snapshot = await db.collection('quotes').where('approved','==', true).get()
+
+        if (snapshot.empty){
+            return res.status(404).json({message: 'No approved quotes found.'})
+        }
+
+        const approvedQuotes = []
+        snapshot.forEach(doc => {
+            approvedQuotes.push({id: doc.id, ...doc.data()})
+        })
 
         if (!snapshot.empty) {
             const lastData = snapshot.docs[0].data()
