@@ -223,7 +223,7 @@ app.get('/unsubscribe', async (req, res) => {
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Error - QuoteByte</title>
+                    <title>Error - quotebyte</title>
                     <style>
                         body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
                         h1 { color: #e74c3c; }
@@ -243,7 +243,7 @@ app.get('/unsubscribe', async (req, res) => {
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Not Found - QuoteByte</title>
+                    <title>Not Found - quotebyte</title>
                     <style>
                         body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
                         h1 { color: #e74c3c; }
@@ -264,7 +264,7 @@ app.get('/unsubscribe', async (req, res) => {
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Already Unsubscribed - QuoteByte</title>
+                    <title>Already Unsubscribed - quotebyte</title>
                     <style>
                         body { 
                             font-family: 'Arial', sans-serif; 
@@ -308,7 +308,7 @@ app.get('/unsubscribe', async (req, res) => {
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Successfully Unsubscribed - QuoteByte</title>
+                <title>Successfully Unsubscribed - quotebyte</title>
                 <style>
                     body { 
                         font-family: 'Arial', sans-serif; 
@@ -342,7 +342,7 @@ app.get('/unsubscribe', async (req, res) => {
                     <p>You have been removed from our weekly quote newsletter.</p>
                     <div class="email">${email}</div>
                     <p>We're sorry to see you go! If you change your mind, you can always subscribe again.</p>
-                    <p>Thank you for being part of QuoteByte!</p>
+                    <p>Thank you for being part of quotebyte!</p>
                 </div>
             </body>
             </html>
@@ -378,8 +378,7 @@ app.post('/unsubscribe', async (req, res) => {
             return res.status(400).json({ message: 'Email required' })
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             return res.status(400).json({ message: 'Invalid email format' })
         }
 
@@ -392,6 +391,8 @@ app.post('/unsubscribe', async (req, res) => {
             active: false,
             unsubscribedAt: FieldValue.serverTimestamp()
         })
+
+        console.log(`User unsubscribed via API: ${email}`)
 
         res.status(200).json({
             message: 'Successfully unsubscribed',
