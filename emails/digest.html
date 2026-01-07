@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <title>Weekly quotebyte</title>
     <style>
         * {
@@ -13,25 +13,15 @@
             padding: 0;
             box-sizing: border-box;
         }
-        /* body {
-            font-family: 'Poppins', san-serif;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        } */
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Open Sans', sans-serif;
+            font-style: normal;
             line-height: 1.6;
             color: #2c3e50;
             background-color: #f5f7fa;
             padding: 20px;
         }
-.email-container {
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
@@ -39,39 +29,34 @@
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         .gradient {
             background: linear-gradient(130deg, #000428 0%, #7b48e8 20%, #00d2ff 50%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #ffffff 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
         }
-
         .header h1 {
-            font-family: "Goldman", sans-serif;
-            font-weight: 700;
+            font-family: "Fugaz One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
             font-size: 42px;
             margin-bottom: 10px;
             color: white;
         }
-        
         .header p {
             font-size: 16px;
             opacity: 0.95;
             font-weight: 300;
         }
-
         .content {
             padding: 40px 30px;
         }
-
         .sub-header {
             font-size: 22px;
             font-weight: 600;
@@ -79,7 +64,6 @@
             margin-bottom: 30px;
             text-align: center;
         }
-
         .quote-card {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             border-left: 5px solid #667eea;
@@ -89,7 +73,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             position: relative;
         }
-
         .quote-card::before {
             content: '"';
             position: absolute;
@@ -100,7 +83,6 @@
             font-family: Georgia, serif;
             line-height: 1;
         }
-
         .quote-text {
             font-size: 20px;
             color: #2c3e50;
@@ -110,7 +92,6 @@
             position: relative;
             z-index: 1;
         }
-
         .quote-author {
             font-size: 16px;
             color: #667eea;
@@ -118,51 +99,43 @@
             font-weight: 600;
             margin-bottom: 5px;
         }
-
         .quote-area {
             font-size: 14px;
             color: #7f8c8d;
             text-align: right;
             font-style: italic;
         }
-
         .no-quotes {
             text-align: center;
             padding: 60px 20px;
             color: #7f8c8d;
         }
-
         .no-quotes p {
             font-size: 18px;
             margin-bottom: 10px;
         }
-
         .footer {
             background-color: #f8f9fa;
             padding: 30px;
             text-align: center;
             border-top: 1px solid #e9ecef;
         }
-
         .footer p {
             font-size: 13px;
             color: #6c757d;
             margin-bottom: 10px;
             line-height: 1.6;
         }
-
         .footer a {
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-
         .footer a:hover {
             color: #764ba2;
             text-decoration: underline;
         }
-
         .copyright {
             margin-top: 20px;
             padding-top: 20px;
@@ -170,40 +143,31 @@
             font-size: 12px;
             color: #95a5a6;
         }
-
         @media only screen and (max-width: 600px) {
             body {
                 padding: 10px;
             }
-            
             .header {
                 padding: 30px 20px;
             }
-            
             .header h1 {
                 font-size: 32px;
             }
-            
             .header p {
                 font-size: 14px;
             }
-            
             .content {
                 padding: 30px 20px;
             }
-            
             .sub-header {
                 font-size: 20px;
             }
-            
             .quote-card {
                 padding: 25px 20px;
             }
-            
             .quote-text {
                 font-size: 18px;
             }
-            
             .footer {
                 padding: 25px 20px;
             }
@@ -243,10 +207,9 @@
         <div class="footer">
             <p>You're receiving this because you subscribed to our weekly quote newsletter.</p>
             <p>
-                <a href="{{{unsubscribeLink}}}">Unsubscribe</a> | 
-                <a href="#">Manage Preferences</a>
+                <a href="{{{unsubscribeLink}}}">Unsubscribe</a>
             </p>
-            <p class="copyright">&copy; {{year}} quotebyte. All rights reserved.</p>
+            <p class="copyright">&copy; {{year}} <a href="">Quotebyte</a>. All rights reserved.</p>
         </div>
     </div>
 </body>
