@@ -23,8 +23,14 @@ button {
     font-style: normal
 }
 
+section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .gradient {
-    background: linear-gradient(#4f46e5, #818cf8);
+    background: linear-gradient(#3730a3, #818cf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -65,7 +71,7 @@ button {
     color: #ffffff;
     text-decoration: none;
     background: #4f46e5;
-    border-radius: 10px;
+    border-radius: calc(infinity * 1px);
     padding: 8px 8px;
     gap: 8px;
     display: flex;
@@ -167,7 +173,7 @@ button {
     padding: 10px;
     color: #000000;
     border: 2px solid #a5b4fc;
-    border-radius: 10px;
+    border-radius: 14px;
 }
 
 .quoteSubmission {
@@ -175,14 +181,7 @@ button {
     flex-direction: column;
     gap: 8px;
     width: 100%;
-    border-radius: 4px;
-}
-
-
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    border-radius: 14px;
 }
 
 .bmaccontainer,
