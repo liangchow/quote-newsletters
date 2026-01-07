@@ -5,9 +5,10 @@
 }
 
 body {
-    font-family: 'Poppins', san-serif;
+    font-family: 'Open Sans', san-serif;
+    font-style: normal;
     min-height: 100vh;
-    background: linear-gradient(to right, #000428, #000046);
+    background: #ffffff;
     color: #7c859f;
     display: flex;
     flex-direction: column;
@@ -16,8 +17,14 @@ body {
     gap: 20px;
 }
 
+button {
+    font-family: "Fugaz One", sans-serif;
+    font-weight: 400;
+    font-style: normal
+}
+
 .gradient {
-    background: linear-gradient(130deg, #7b48e8 0%, #00d2ff 20%);
+    background: linear-gradient(#4f46e5, #818cf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -42,22 +49,22 @@ body {
 }
 
 .headerContainer h1 {
-    font-family: "Goldman", sans-serif;
-    font-weight: 700;
+    font-family: "Fugaz One", sans-serif;
+    font-weight: 400;
     font-style: normal;
-    font-size: 36px;
+    font-size: 42px;
     margin: 0;
 }
 
 .headerContainer p {
-    color: cyan;
+    color: #000000;
 }
 
 .headerContainer a,
 .addKey {
-    color: white;
+    color: #ffffff;
     text-decoration: none;
-    background: hsla(200, 80%, 50%, 0.4);
+    background: #4f46e5;
     border-radius: 10px;
     padding: 8px 8px;
     gap: 8px;
@@ -75,7 +82,7 @@ body {
 
 .headerContainer a:hover,
 .addKey:hover {
-    background: hsla(220, 80%, 50%, 0.8)
+    background: #a5b4fc;
 }
 
 .quoteContainer {
@@ -84,7 +91,7 @@ body {
 }
 
 .subHeader {
-    color: #ffffff;
+    color: #000000;
     font-size: 1.3rem;
 }
 
@@ -104,7 +111,7 @@ body {
 }
 
 .info h3 {
-    color: cyan;
+    color: #4f46e5;
     font-weight: 500;
 }
 
@@ -118,22 +125,22 @@ body {
 
 .errMsg,
 .errSubMsg {
-    color: coral;
+    color: #ef4444;
     display: none;
 }
 
 .subMsg {
-    color: lime;
+    color: #10b981;
     display: none;
 }
 
 .quoteErrMsg {
-    color: coral;
+    color: #ef4444;
     display: none;
 }
 
 .quoteSubMsg {
-    color: lime;
+    color: #10b981;
     display: none;
 }
 
@@ -148,7 +155,7 @@ body {
 
 .keyInput input:focus-within,
 .quoteSubmission input:focus-within {
-    border-color: #7b48e8;
+    border-color: #464fe5;
 }
 
 .keyInput input,
@@ -158,8 +165,8 @@ body {
     border: none;
     outline: none;
     padding: 10px;
-    color: white;
-    border: 1px solid navy;
+    color: #000000;
+    border: 2px solid #a5b4fc;
     border-radius: 10px;
 }
 
@@ -189,7 +196,7 @@ section {
 
 .bmaccontainer a:hover,
 .footerContainer a:hover {
-    color: lime;
+    color: #a5b4fc;
     opacity: 0.9;
 }
 
@@ -203,7 +210,7 @@ section {
     }
 
     .quoteContainer{
-        text-wrap: unset;
+        text-wrap: balance;
     }
 
     .subHeader {
@@ -211,7 +218,8 @@ section {
     }
 
     .info {
-        gap:16px;
+        text-wrap: balance;
+        gap: 16px;
     }
 
     .info h3,
