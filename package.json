@@ -1,5 +1,5 @@
 {
-  "name": "quote-api",
+  "name": "quote-newsletters",
   "version": "1.0.0",
   "description": "Inspiration quotes from the legend!",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liangchow/quote-api.git"
+    "url": "git+https://github.com/liangchow/quote-newsletters.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/liangchow/quote-api/issues"
+    "url": "https://github.com/liangchow/quote-newsletters/issues"
   },
-  "homepage": "https://github.com/liangchow/quote-api#readme",
+  "homepage": "https://github.com/liangchow/quote-newsletters#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
