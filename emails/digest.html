@@ -30,27 +30,26 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .gradient {
-            background: linear-gradient(130deg, #000428 0%, #7b48e8 20%, #00d2ff 50%);
+            background: linear-gradient(#3730a3, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #ffffff 100%);
-            padding: 40px 30px;
+            /* background: linear-gradient(135deg, #667eea 0%, #ffffff 100%); */
+            padding: 10px 30px;
             text-align: center;
-            color: white;
+            /* color: white; */
         }
         .header h1 {
             font-family: "Fugaz One", sans-serif;
             font-weight: 400;
             font-style: normal;
             font-size: 42px;
-            margin-bottom: 10px;
-            color: white;
         }
         .header p {
-            font-size: 16px;
+            color: #000000;
+            font-size: 1rem;
             opacity: 0.95;
             font-weight: 300;
         }
@@ -58,9 +57,11 @@
             padding: 40px 30px;
         }
         .sub-header {
+            font-family: "Fugaz One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
             font-size: 22px;
-            font-weight: 600;
-            color: #2c3e50;
+            color: #4f46e5;
             margin-bottom: 30px;
             text-align: center;
         }
@@ -177,12 +178,12 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>quotebyte</h1>
+            <h1 class="gradient">quotebyte</h1>
             <p>Stay connected to the minds that changed the world</p>
         </div>
 
         <div class="content">
-            <h2 class="sub-header">📖 Here is your weekly inspiration!</h2>
+            <h2 class="sub-header">Here is your weekly inspiration!</h2>
             
             {{#if quotes}}
             <div class="quote-card">
