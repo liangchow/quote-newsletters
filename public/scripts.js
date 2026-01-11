@@ -139,11 +139,11 @@ async function fetchRandomQuote(){
 
         quoteTextOutput.textContent = `"${quote.text}."`
         quoteAuthorOutput.textContent = `-${quote.author || '-Unknown'}`
-        quoteAreaOutput.textContent = `(${quote.area})`
+        quoteAreaOutput.textContent = `(${quote.area}) || ''`
 
         quoteTextInput.placeholder = `Quote (e.g., ${quote.text})`
         quoteAuthorInput.placeholder = `Author (e.g., ${quote.author})`
-        quoteAreaInput.placeholder = `Area or field (e.g., ${quote.area})`
+        quoteAreaInput.placeholder = `Area or field`
 
     } catch(err){
         console.log('Failed to get quote', err)
