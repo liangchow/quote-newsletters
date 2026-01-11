@@ -391,7 +391,7 @@ app.post('/send_digest', async (req, res) => {
             const data = {
                 template: 'digest',
                 recipients: [recipient], // Pass as array for compatibility with worker
-                subject: 'Your Weekly Quote Digest',
+                subject: 'Quotebyte: Weekly Quote',
                 context: {
                     weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
                 }
@@ -487,7 +487,7 @@ cron.schedule('0 9 * * 1', async () => {
                 const data = {
                     template: 'digest',
                     recipients: [recipient], // Pass as array for compatibility
-                    subject: 'Weekly QuoteByte',
+                    subject: 'Quotebyte: Weekly Quote',
                     context: {
                         weekNumber: Math.ceil((new Date() - new Date(new Date().getFullYear(), 0, 1)) / 604800000)
                     }
@@ -522,7 +522,7 @@ emailQueue.process(1, async (job) => {
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: recipients[0], // We now only have one recipient per job
-                subject: subject || 'Weekly QuoteByte',
+                subject: subject || 'Quotebyte: Weekly Quote',
                 template: template,
                 context: {
                     quotes: quote,
