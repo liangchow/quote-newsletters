@@ -46,7 +46,7 @@
         <section>
             <h2 class="subHeader">Submit a quote</h2>
             <p class="preMsg">Share your favorite quote with the world!</p>
-            <p class="quoteErrMsg">❌ Submission failed. All fields are required</p>
+            <p class="quoteErrMsg">❌ Submission failed. Quote and author are required</p>
             <p class="quoteSubMsg">✅ Quote submitted!</p>
             <div class="info">
                 <h3>Example Quote</h3>
@@ -59,7 +59,7 @@
             <form method="POST" class="quoteSubmission">
                 <input id="quoteText" type="text" placeholder="Quote" maxlength="500" required />
                 <input id="quoteAuthor" type="text" placeholder="Author" maxlength="100" required />
-                <input id="quoteArea" type="text" placeholder="Area or field" maxlength="100" required />
+                <input id="quoteArea" type="text" placeholder="Area or field" maxlength="100" />
             </form>
             <button id="share_btn" class="addKey" type="button">
                 Share
