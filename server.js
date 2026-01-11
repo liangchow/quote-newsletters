@@ -414,7 +414,7 @@ app.post('/send_digest', async (req, res) => {
 
 // Newsletter Functions
 const transporter = nodemailer.createTransport({
-    host: 'mail.hatbyte.com',
+    host: 'mail.quotebyte.app',
     port: 587,
     secure: false,
     auth: {
