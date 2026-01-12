@@ -411,28 +411,39 @@ app.post('/send_digest', async (req, res) => {
     }
 })
 
-
 // Newsletter Functions
-const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS 
-    }
-})
+let transporter
 
-const handlebarsOptions = {
-    viewEngine: {
+async function initMailer(){
+
+    const {default: hbs} = await import('nodemailer-express-handlebars')
+
+    transporter = nodemailer.createTransport({
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: EMAIL_USER,
+            pass: EMAIL_PASS 
+        }
+    })
+
+    const handlebarsOptions = {
+        viewEngine: {
+            extName: '.html',
+            partialsDir: path.resolve('./emails'),
+            defaultLayout: false,
+        },
+        viewPath: path.resolve('./emails'),
         extName: '.html',
-        partialsDir: path.resolve('./emails'),
-        defaultLayout: false,
-    },
-    viewPath: path.resolve('./emails'),
-    extName: '.html',
+    }
+    transporter.use('compile', hbs(handlebarsOptions))
 }
-transporter.use('compile', hbs(handlebarsOptions))
+
+initMailer().catch(err => {
+    console.log('Failed to initialize mailer', err)
+    process.exit(1)
+})
 
 class InMemoryQueue {
     constructor(name) {
