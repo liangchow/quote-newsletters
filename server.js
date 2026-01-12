@@ -236,7 +236,7 @@ app.get('/unsubscribe', async (req, res) => {
                             margin: 50px auto; 
                             padding: 20px; 
                             text-align: center;
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            background: #2c3e50;
                             min-height: 100vh;
                         }
                         .container {
@@ -280,7 +280,7 @@ app.get('/unsubscribe', async (req, res) => {
                         margin: 50px auto; 
                         padding: 20px; 
                         text-align: center;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        background: #2c3e50;
                         min-height: 100vh;
                     }
                     .container {
