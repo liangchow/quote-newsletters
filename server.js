@@ -2,7 +2,7 @@ const express = require('express')
 require('dotenv').config()
 const nodemailer = require('nodemailer')
 const path = require('path')
-const hbs = require('nodemailer-express-handlebars').default
+// const hbs = require('nodemailer-express-handlebars').default
 const cron = require('node-cron')
 const { db } = require('./firebase')
 const { FieldValue } = require('firebase-admin/firestore')
@@ -416,7 +416,7 @@ let transporter
 
 async function initMailer(){
 
-    const {default: hbs} = await import('nodemailer-express-handlebars')
+    const hbs = (await import('nodemailer-express-handlebars')).default
 
     transporter = nodemailer.createTransport({
         host: 'smtp-relay.brevo.com',
