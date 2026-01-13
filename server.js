@@ -10,7 +10,7 @@ const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
 const PORT = process.env.PORT || 1339
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
-const { EMAIL_USER, EMAIL_PASS } = process.env
+const { BREVO_SMTP_HOST, BREVO_SMTP_PORT, BREVO_SMTP_USER, BREVO_SMTP_PASS, SENDER_EMAIL } = process.env
 
 // Middleware
 app.use(express.json({limit: '10kb'})) // Limit payload size for security
