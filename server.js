@@ -419,12 +419,12 @@ async function initMailer(){
     const hbs = (await import('nodemailer-express-handlebars')).default
 
     transporter = nodemailer.createTransport({
-        host: 'smtp-relay.brevo.com',
-        port: 587,
+        host: process.env.BREVO_SMTP_HOST,
+        port: process.env.BREVO_SMTP_PORT,
         secure: false,
         auth: {
-            user: EMAIL_USER,
-            pass: EMAIL_PASS 
+            user: BREVO_SMTP_USER,
+            pass: BREVO_SMTP_PASS, 
         }
     })
 
@@ -531,7 +531,7 @@ emailQueue.process(1, async (job) => {
         // Send email
         try {
             const mailOptions = {
-                from: process.env.EMAIL_USER,
+                from: process.env.SENDER_EMAIL,
                 to: recipients[0], // We now only have one recipient per job
                 subject: subject || 'Quotebyte: Weekly Quote',
                 template: template,
